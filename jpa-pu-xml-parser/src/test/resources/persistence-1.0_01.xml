@@ -1,0 +1,23 @@
+<persistence 
+    xmlns="http://java.sun.com/xml/ns/persistence"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd"
+    version="1.0">
+
+    <persistence-unit name="testPU-001" transaction-type="JTA">
+        <description>Test Persistence Unit</description>
+        <provider>a.fictituos.provider</provider>
+        <jta-data-source>datasource/jta</jta-data-source>
+        <non-jta-data-source>datasource/non-jta</non-jta-data-source>
+        <mapping-file>a.mapping.file</mapping-file>
+        <mapping-file>another.mapping.file</mapping-file>
+        <jar-file>a.jar.file</jar-file>
+        <jar-file>another.jar.file</jar-file>
+        <class>test.entity.OneEntity</class>
+        <class>test.entity.TwoEntity</class>
+        <exclude-unlisted-classes>false</exclude-unlisted-classes>
+        <properties>
+           <property name="a.property" value="a.value"/>
+        </properties>
+    </persistence-unit>    
+</persistence>
