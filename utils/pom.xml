@@ -18,22 +18,11 @@
     <version>0.0.1-SNAPSHOT</version>
   </parent>
   
-  <artifactId>jpa-persistence-unit-scanner</artifactId>
-  <name>jpa-persistence-unit-scanner</name>
-
+  <artifactId>utils</artifactId>
+  <name>Utils</name>
+  
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
-  <dependencies>
-  	<dependency>
-  		<groupId>com.ibm.jpaormviewer</groupId>
-  		<artifactId>class-scanner</artifactId>
-  		<version>0.0.1-SNAPSHOT</version>
-  	</dependency>
-  	<dependency>
-        <groupId>com.ibm.jpaormviewer</groupId>
-        <artifactId>jpa-orm-xml-parser</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-  </dependencies>
+
 </project>

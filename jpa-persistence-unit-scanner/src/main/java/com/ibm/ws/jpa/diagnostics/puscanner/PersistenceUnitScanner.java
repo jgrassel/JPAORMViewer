@@ -28,19 +28,16 @@ import com.ibm.ws.jpa.diagnostics.orm.xml.EntityMappingsException;
 import com.ibm.ws.jpa.diagnostics.orm.xml.EntityMappingsFactory;
 
 public final class PersistenceUnitScanner {
-    public static PersistenceUnitScannerResults scanPersistenceUnit(String appName, String moduleName, PersistenceUnitInfo pUnit) 
+    public static PersistenceUnitScannerResults scanPersistenceUnit(PersistenceUnitInfo pUnit) 
             throws PersistenceUnitScannerException {
         if (pUnit == null) {
             throw new PersistenceUnitScannerException("Cannot accept a null value for PersistenceUnitInfo argument.");
         }
         
-        PersistenceUnitScanner puScanner = new PersistenceUnitScanner(pUnit, appName, moduleName);
+        PersistenceUnitScanner puScanner = new PersistenceUnitScanner(pUnit);
         return puScanner.scan();
     }
 
-    final private String appName;
-    final private String moduleName;
-    
     final private PersistenceUnitInfo pUnit;
     final private ClassLoader tempCL;
     
@@ -52,9 +49,7 @@ public final class PersistenceUnitScanner {
     final List<EntityMappingsScannerResults> classScannerResults = new ArrayList<EntityMappingsScannerResults>();
     
     
-    private PersistenceUnitScanner(PersistenceUnitInfo pUnit, String appName, String moduleName) {
-        this.appName = appName;
-        this.moduleName = moduleName;
+    private PersistenceUnitScanner(PersistenceUnitInfo pUnit) {
         this.pUnit = pUnit;
         this.tempCL = pUnit.getNewTempClassLoader();
         
@@ -68,7 +63,7 @@ public final class PersistenceUnitScanner {
         scanEntityMappings();
         scanClasses();
         
-        return new PersistenceUnitScannerResults(appName, moduleName, pUnit, entityMappingsDefinitionsList, classScannerResults);
+        return new PersistenceUnitScannerResults(pUnit, entityMappingsDefinitionsList, classScannerResults);
     }
     
     /**

@@ -14,26 +14,15 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>com.ibm.jpaormviewer</groupId>
-    <artifactId>jpaormviewer-parent</artifactId>
+    <artifactId>xml-parsers</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
   
-  <artifactId>jpa-persistence-unit-scanner</artifactId>
-  <name>jpa-persistence-unit-scanner</name>
-
+  <artifactId>jpa-orm-xml-parser</artifactId>
+  <name>jpa-orm-xml-parser</name>
+  <url>http://maven.apache.org</url>
+  
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
-  <dependencies>
-  	<dependency>
-  		<groupId>com.ibm.jpaormviewer</groupId>
-  		<artifactId>class-scanner</artifactId>
-  		<version>0.0.1-SNAPSHOT</version>
-  	</dependency>
-  	<dependency>
-        <groupId>com.ibm.jpaormviewer</groupId>
-        <artifactId>jpa-orm-xml-parser</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-  </dependencies>
 </project>

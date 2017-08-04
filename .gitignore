@@ -1,4 +1,7 @@
 *.class
+*.ear
+*.jar
+*.war
 .settings
 */target
-
+**/*/target

@@ -20,29 +20,17 @@ import com.ibm.ws.jpa.diagnostics.orm.ano.EntityMappingsScannerResults;
 import com.ibm.ws.jpa.diagnostics.orm.xml.EntityMappingsDefinition;
 
 public final class PersistenceUnitScannerResults {
-    final private String applicationName;
-    final private String moduleName;
     final private PersistenceUnitInfo pUnit;
     
     final private List<EntityMappingsDefinition> entityMappingsDefinitionsList;
     final private List<EntityMappingsScannerResults> classScannerResults;
        
-    public PersistenceUnitScannerResults(String applicationName, String moduleName, PersistenceUnitInfo pUnit,
-            List<EntityMappingsDefinition> entityMappingsDefinitionsList, List<EntityMappingsScannerResults> classScannerResults) {
-        this.applicationName = applicationName;
-        this.moduleName = moduleName;
+    public PersistenceUnitScannerResults(PersistenceUnitInfo pUnit, List<EntityMappingsDefinition> entityMappingsDefinitionsList, 
+            List<EntityMappingsScannerResults> classScannerResults) {
         this.pUnit = pUnit;
                 
         this.entityMappingsDefinitionsList = entityMappingsDefinitionsList;
         this.classScannerResults = classScannerResults;
-    }
-
-    public final String getApplicationName() {
-        return applicationName;
-    }
-
-    public final String getModuleName() {
-        return moduleName;
     }
     
     public final String getPersistenceUnitName() {
@@ -63,8 +51,8 @@ public final class PersistenceUnitScannerResults {
 
     @Override
     public String toString() {
-        return "PersistenceUnitScannerResults [applicationName=" + applicationName + ", moduleName=" + moduleName
-                + ", pUnit=" + pUnit.getPersistenceUnitName() 
+        return "PersistenceUnitScannerResults ["
+                + "pUnit=" + pUnit.getPersistenceUnitName() 
                 + ", entityMappingsDefinitionsList (size)=" + entityMappingsDefinitionsList.size()
                 + ", classScannerResults (size)=" + classScannerResults.size() 
                 + "]";
