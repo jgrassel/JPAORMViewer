@@ -1,0 +1,4 @@
+dependencies {
+	compile project(':class-scanner')
+	compile project(':xml-parsers:jpa-orm-xml-parser')
+}

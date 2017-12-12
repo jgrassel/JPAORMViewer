@@ -4,4 +4,8 @@
 *.war
 .settings
 */target
+**/*/build
 **/*/target
+.DS_Store
+.gradle
+

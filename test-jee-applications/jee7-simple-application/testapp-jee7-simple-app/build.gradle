@@ -1,0 +1,7 @@
+apply plugin: 'ear'
+
+repositories { mavenCentral() }
+
+dependencies {
+	deploy project(path: ':test-jee-applications:jee7-simple-application:testapp-jee7-simple-webapp', configuration: 'archives')
+}

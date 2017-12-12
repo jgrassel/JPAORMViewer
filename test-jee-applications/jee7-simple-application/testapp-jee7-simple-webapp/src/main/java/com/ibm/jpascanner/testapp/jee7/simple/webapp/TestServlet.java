@@ -19,10 +19,8 @@ public class TestServlet extends HttpServlet {
     @PersistenceContext(unitName="Test-Web-PU")
     private EntityManager em;
     
-    @Resource
     private UserTransaction tx;
 
-    @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         super.doGet(req, resp);
         
@@ -39,7 +37,6 @@ public class TestServlet extends HttpServlet {
         }        
     }
 
-    @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         doGet(req, resp);
     }
