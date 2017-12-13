@@ -1,14 +1,3 @@
-/*******************************************************************************
- * Copyright (c) 2011, 2017 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
-
 package com.ibm.ws.jpa.diagnostics.orm.ano;
 
 import static org.junit.Assert.assertEquals;
@@ -17,12 +6,18 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -38,45 +33,65 @@ import com.ibm.ws.jpa.diagnostics.orm.ano.jaxb.classinfo10.MethodsType;
 import com.ibm.ws.jpa.diagnostics.orm.ano.jaxb.classinfo10.ModifierType;
 import com.ibm.ws.jpa.diagnostics.orm.ano.jaxb.classinfo10.ParameterType;
 import com.ibm.ws.jpa.diagnostics.orm.ano.jaxb.classinfo10.ParametersType;
-import com.ibm.ws.jpa.diagnostics.orm.ano.testentities.SimpleJPAEntity;
 
-public class TestClassAnalyzer {
+public class TestAsmClassAnalyzer {
+	private static File cDir;
 
-    @BeforeClass
-    public static void setUpBeforeClass() throws Exception {
-    }
+	@BeforeClass
+	public static void setUpBeforeClass() throws Exception {
+		cDir = new File(System.getProperty("user.dir"));
+	}
 
-    @AfterClass
-    public static void tearDownAfterClass() throws Exception {
-    }
+	@AfterClass
+	public static void tearDownAfterClass() throws Exception {
+	}
 
-    @Before
-    public void setUp() throws Exception {
-    }
+	@Before
+	public void setUp() throws Exception {
+	}
 
-    @After
-    public void tearDown() throws Exception {
-    }
+	@After
+	public void tearDown() throws Exception {
+	}
 
-    @Test
-    public void testClassAnalyzerWithSimpleJPAEntity() throws Exception {
-        final ClassInfoType cit = ClassAnalyzer.analyzeClass(SimpleJPAEntity.class);
-        assertNotNull(cit);
-        
-        // Test Class Info
-        assertEquals("com.ibm.ws.jpa.diagnostics.orm.ano.testentities.SimpleJPAEntity", cit.getClassName());
-        assertEquals("java.lang.Object", cit.getSuperclassName());
-        assertEquals("com.ibm.ws.jpa.diagnostics.orm.ano.testentities", cit.getPackageName());
-       
-        assertFalse(cit.isIsAnonymous());
-        assertFalse(cit.isIsEnum());
-        assertFalse(cit.isIsInterface());
-        assertFalse(cit.isIsSynthetic());
-        assertEquals(1, cit.getModifiers().getModifier().size());
-        assertTrue(cit.getModifiers().getModifier().contains(ModifierType.PUBLIC));
-        
-        // Test Class Annotations
-        final AnnotationsType classAnnos = cit.getAnnotations();
+	@Test
+	public void testAsmClassAnalyzerWithSimpleJPAEntity() throws Exception {
+		// Find SimpleJPAEntity.class in a way that works in both command line gradle and in eclipse
+		final File[] targetFile = new File[1];
+		Files.walk(Paths.get(cDir.getAbsolutePath()))
+		.filter(p -> p.getFileName().toString().equals("SimpleJPAEntity.class"))
+		.forEach(p -> targetFile[0] = p.toFile());
+
+		Assert.assertNotNull(targetFile[0]);
+
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+		try (FileInputStream fis = new FileInputStream(targetFile[0])) {
+			byte[] buffer = new byte[4096];
+			int bytesRead;  		
+			do {
+				bytesRead = fis.read(buffer);
+				if (bytesRead > 0)
+					baos.write(buffer, 0, bytesRead);
+			} while (bytesRead >= 0);
+		}
+
+		ClassInfoType cit = AsmClassAnalyzer.analyzeClass("", baos.toByteArray());
+		Assert.assertNotNull(cit);
+
+		assertEquals("com.ibm.ws.jpa.diagnostics.orm.ano.testentities.SimpleJPAEntity", cit.getClassName());
+		assertEquals("com.ibm.ws.jpa.diagnostics.orm.ano.testentities", cit.getPackageName());
+		assertEquals("java.lang.Object", cit.getSuperclassName());
+
+		assertFalse(cit.isIsAnonymous());
+		assertFalse(cit.isIsEnum());
+		assertFalse(cit.isIsInterface());
+		assertFalse(cit.isIsSynthetic());
+		assertEquals(1, cit.getModifiers().getModifier().size());
+		assertTrue(cit.getModifiers().getModifier().contains(ModifierType.PUBLIC));
+		
+		// Test Class Annotations
+		final AnnotationsType classAnnos = cit.getAnnotations();
         assertNotNull(classAnnos);
         final List<AnnotationInfoType> clsAnnoList = classAnnos.getAnnotation();       
         assertNotNull(clsAnnoList);
@@ -85,10 +100,11 @@ public class TestClassAnalyzer {
         assertNotNull(clsAit);
         assertEquals("Entity", clsAit.getName());
         assertEquals("javax.persistence.Entity", clsAit.getType());
-        
-        // Test Class Fields
+		
+		// Test Class Fields
         final FieldsType ft = cit.getFields();
         assertNotNull(ft);
+        
         final List<FieldInfoType> fieldsList = ft.getField();
         assertNotNull(fieldsList);
         assertEquals(5, fieldsList.size());
@@ -104,6 +120,7 @@ public class TestClassAnalyzer {
             if ("id".equals(fit.getName())) {
                 // Test id
                 assertTrue(fit.getModifiers().getModifier().contains(ModifierType.PRIVATE));
+                assertEquals("int", fit.getType());
                 
                 final AnnotationsType fieldAnnos = fit.getAnnotations();
                 assertNotNull(fieldAnnos);
@@ -119,6 +136,7 @@ public class TestClassAnalyzer {
             } else if ("version".equals(fit.getName())) {
                 // Test version
                 assertTrue(fit.getModifiers().getModifier().contains(ModifierType.PRIVATE));
+                assertEquals("int", fit.getType());
                 
                 final AnnotationsType fieldAnnos = fit.getAnnotations();
                 assertNotNull(fieldAnnos);
@@ -134,6 +152,7 @@ public class TestClassAnalyzer {
             } else if ("persistentString".equals(fit.getName())) {
                 // Test persistentString
                 assertTrue(fit.getModifiers().getModifier().contains(ModifierType.PRIVATE));
+                assertEquals("java.lang.String", fit.getType());
                 
                 final AnnotationsType fieldAnnos = fit.getAnnotations();
                 assertNotNull(fieldAnnos);
@@ -149,6 +168,7 @@ public class TestClassAnalyzer {
             } else if ("persistentInteger".equals(fit.getName())) {
                 // Test persistentInteger
                 assertTrue(fit.getModifiers().getModifier().contains(ModifierType.PRIVATE));
+                assertEquals("int", fit.getType());
                 
                 final AnnotationsType fieldAnnos = fit.getAnnotations();
                 assertNotNull(fieldAnnos);
@@ -164,6 +184,7 @@ public class TestClassAnalyzer {
             } else if ("persistentIntegerWrapper".equals(fit.getName())) {
                 // Test persistentIntegerWrapper
                 assertTrue(fit.getModifiers().getModifier().contains(ModifierType.PRIVATE));
+                assertEquals("java.lang.Integer", fit.getType());
                 
                 final AnnotationsType fieldAnnos = fit.getAnnotations();
                 assertNotNull(fieldAnnos);
@@ -403,11 +424,11 @@ public class TestClassAnalyzer {
                 assertNull(pt);
 
                 methodsPassed.put("doPanic", Boolean.TRUE);
-            } else if ("com.ibm.ws.jpa.diagnostics.orm.ano.testentities.SimpleJPAEntity".equals(mit.getMethodName())) {
+            } else if ("<init>".equals(mit.getMethodName())) {
                 // One of the two Ctors
                 assertTrue(mit.getModifiers().getModifier().contains(ModifierType.PUBLIC));
                 assertTrue(mit.isIsCtor());
-                assertEquals("com.ibm.ws.jpa.diagnostics.orm.ano.testentities.SimpleJPAEntity", mit.getReturnType());
+//                assertEquals("com.ibm.ws.jpa.diagnostics.orm.ano.testentities.SimpleJPAEntity", mit.getReturnType());
                 
                 ParametersType pt =  mit.getParameters();
                 if (pt == null || pt.getParameter().isEmpty()) {
@@ -440,13 +461,6 @@ public class TestClassAnalyzer {
         ClassInfoType innerCit = ictList.get(0);
         assertNotNull(innerCit);
         assertEquals("com.ibm.ws.jpa.diagnostics.orm.ano.testentities.SimpleJPAEntity$DumbInnerClass", innerCit.getClassName());
-        
-//        ClassInformationType classInfoType = new ClassInformationType();
-//        classInfoType.getClassInfo().add(cit);
-//        
-//        byte[] xmlData = ClassAnalyzer.produceClassInfoTypeXML(classInfoType);
-//        String printme = new String(xmlData);
-//        System.out.println(printme);
-    }
 
+	}
 }

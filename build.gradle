@@ -18,10 +18,10 @@ subprojects {
 
    dependencies {
    	    compile 'javax.persistence:javax.persistence-api:2.2'
-    	compile 'javax.servlet:javax.servlet-api:4.0.0'
-    	compile 'javax.transaction:javax.transaction-api:1.2'
+    		compile 'javax.servlet:javax.servlet-api:4.0.0'
+    		compile 'javax.transaction:javax.transaction-api:1.2'
 
-       testImplementation 'junit:junit:4.12'
+       	testImplementation 'junit:junit:4.12'
    }
 }
 

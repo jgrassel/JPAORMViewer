@@ -6,6 +6,9 @@
 */target
 **/*/build
 **/*/target
+**/*/bin
 .DS_Store
 .gradle
-
+.classpath
+.project
+**/*/.gitignore
