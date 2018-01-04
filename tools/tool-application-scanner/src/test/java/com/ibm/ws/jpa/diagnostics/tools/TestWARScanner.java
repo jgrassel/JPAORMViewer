@@ -23,7 +23,7 @@ public class TestWARScanner {
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
         cDir = new File(System.getProperty("user.dir"));
-        resDir = new File(cDir, "../../test-jee-applications/jee7-simple-application/testapp-jee7-simple-webapp/target");
+        resDir = new File(cDir, "../../test-jee-applications/jee7-simple-application/testapp-jee7-simple-webapp/build/libs");
     }
 
     @AfterClass
@@ -40,13 +40,13 @@ public class TestWARScanner {
 
     @Test
     public void test() throws Exception{
-        final File testFile = new File(resDir, "testapp-jee7-simple-webapp-0.0.1-SNAPSHOT.war");
+        final File testFile = new File(resDir, "testapp-jee7-simple-webapp.war");
         final WARScanner warScanner = new WARScanner();
         final WARScannerResult result = warScanner.scanWarFile(testFile, null, null);
         assertNotNull(result);
         
         assertEquals(testFile.toPath(), result.getWarFilePath());
-        assertEquals("testapp-jee7-simple-webapp-0.0.1-SNAPSHOT.war", result.getWarFileName());
+        assertEquals("testapp-jee7-simple-webapp.war", result.getWarFileName());
         
         final PersistentArchiveScanResult webInfClassesPersistentArchiveScanResult = result.getWebInfClassesPersistentArchiveScanResult();
         assertNotNull(webInfClassesPersistentArchiveScanResult);

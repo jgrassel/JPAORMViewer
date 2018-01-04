@@ -19,7 +19,7 @@ public class TestEARScanner {
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
         cDir = new File(System.getProperty("user.dir"));
-        resDir = new File(cDir, "../../test-jee-applications/jee7-simple-application/testapp-jee7-simple-app/target");
+        resDir = new File(cDir, "../../test-jee-applications/jee7-simple-application/testapp-jee7-simple-app/build/libs");
     }
 
     @AfterClass
@@ -36,7 +36,8 @@ public class TestEARScanner {
 
     @Test
     public void test() throws Exception {
-        final File testFile = new File(resDir, "TestApp_JEE7_Simple.ear");
+        final File testFile = new File(resDir, "testapp-jee7-simple-app.ear");
+        assertTrue(testFile.exists());
         
         EARScanner ears = new EARScanner();
         ears.scanEarFile(testFile);
