@@ -1,0 +1,4 @@
+dependencies {
+	compile project(':com.ibm.ws.jpaormscanner.class_scanner')
+	compile project(':com.ibm.ws.jpaormscanner.xml_parsers.jpa_orm')
+}

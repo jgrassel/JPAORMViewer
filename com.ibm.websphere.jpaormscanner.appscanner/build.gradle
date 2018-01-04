@@ -1,0 +1,8 @@
+dependencies {
+	compile project(':com.ibm.ws.jpaormscanner.class_scanner')
+	compile project(':com.ibm.ws.jpaormscanner.xml_parsers.jpa_orm')
+	compile project(':com.ibm.ws.jpaormscanner.xml_parsers.jpa_pu')
+	compile project(':com.ibm.ws.jpaormscanner.puscanner')
+	compile project(':com.ibm.ws.jpaormscanner.utils')
+	compile project(':test-jee-applications:jee7-simple-application:testapp-jee7-simple-app')
+}

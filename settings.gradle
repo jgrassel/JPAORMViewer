@@ -1,12 +1,13 @@
 rootProject.name = 'JPAORMViewer'
 
-include 'utils'
-include 'xml-parsers:jpa-orm-xml-parser'
-include 'xml-parsers:jpa-pu-xml-parser'
-include 'class-scanner'
-include 'jpa-persistence-unit-scanner'
+include 'com.ibm.ws.jpaormscanner.utils'
+include 'com.ibm.ws.jpaormscanner.class_scanner'
+include 'com.ibm.ws.jpaormscanner.xml_parsers.jpa_orm'
+include 'com.ibm.ws.jpaormscanner.xml_parsers.jpa_pu'
+include 'com.ibm.ws.jpaormscanner.puscanner'
+
+include 'com.ibm.websphere.jpaormscanner.appscanner'
 
 include 'test-jee-applications:jee7-simple-application:testapp-jee7-simple-webapp'
 include 'test-jee-applications:jee7-simple-application:testapp-jee7-simple-app'
 
-include 'tools:tool-application-scanner'

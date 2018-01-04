@@ -1,8 +1,0 @@
-dependencies {
-	compile project(':class-scanner')
-	compile project(':xml-parsers:jpa-orm-xml-parser')
-	compile project(':xml-parsers:jpa-pu-xml-parser')
-	compile project(':jpa-persistence-unit-scanner')
-	compile project(':utils')
-	compile project(':test-jee-applications:jee7-simple-application:testapp-jee7-simple-app')
-}
