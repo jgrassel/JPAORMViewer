@@ -8,6 +8,4 @@ include 'com.ibm.ws.jpaormscanner.puscanner'
 
 include 'com.ibm.websphere.jpaormscanner.appscanner'
 
-include 'test-jee-applications:jee7-simple-application:testapp-jee7-simple-webapp'
-include 'test-jee-applications:jee7-simple-application:testapp-jee7-simple-app'
 
