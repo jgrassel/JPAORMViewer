@@ -625,10 +625,16 @@ public class Persistence implements PUP_Persistence {
          */
         
         public PUP_PersistenceUnitCachingType pup_getSharedCacheMode() {
+            if (getSharedCacheMode() == null) {
+                return null;
+            }
             return PUP_PersistenceUnitCachingType.valueOf(getSharedCacheMode().value());
         }
         
         public PUP_PersistenceUnitValidationModeType pup_getValidationMode() {
+            if (getValidationMode() == null) {
+                return null;
+            }
             return PUP_PersistenceUnitValidationModeType.valueOf(getValidationMode().value());
         }
         
