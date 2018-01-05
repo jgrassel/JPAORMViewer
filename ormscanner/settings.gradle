@@ -1,11 +1,8 @@
 rootProject.name = 'JPAORMViewer'
 
-include 'com.ibm.ws.jpaormscanner.utils'
+include 'com.ibm.ws.jpaormscanner.app_scanner'
 include 'com.ibm.ws.jpaormscanner.class_scanner'
 include 'com.ibm.ws.jpaormscanner.xml_parsers.jpa_orm'
 include 'com.ibm.ws.jpaormscanner.xml_parsers.jpa_pu'
 include 'com.ibm.ws.jpaormscanner.puscanner'
-
-include 'com.ibm.websphere.jpaormscanner.appscanner'
-
-
+include 'com.ibm.ws.jpaormscanner.utils'
