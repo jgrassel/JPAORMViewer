@@ -24,6 +24,8 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.TypePath;
 
+import com.ibm.ws.jpa.diagnostics.orm.ano.jaxb.classinfo10.AnnotationElementType;
+import com.ibm.ws.jpa.diagnostics.orm.ano.jaxb.classinfo10.AnnotationElementValueType;
 import com.ibm.ws.jpa.diagnostics.orm.ano.jaxb.classinfo10.AnnotationInfoType;
 import com.ibm.ws.jpa.diagnostics.orm.ano.jaxb.classinfo10.AnnotationsType;
 import com.ibm.ws.jpa.diagnostics.orm.ano.jaxb.classinfo10.ClassInfoType;
@@ -324,33 +326,106 @@ public class AsmClassAnalyzer {
 	
 	private class CAAnnotationVisitor extends AnnotationVisitor {
 		private final AnnotationInfoType ait;
+		private final String desc;
+		private final boolean visible;
 		
 		public CAAnnotationVisitor(AnnotationInfoType ait, String desc, boolean visible) {
 			super(Opcodes.ASM6);
 			this.ait = ait;
+			this.desc = desc;
+			this.visible = visible;
 		}
 		
 		@Override
 		public void visit(String name, Object value) {
 			super.visit(name, value);
+			
+			final List<AnnotationElementType> eList = ait.getElement();			
+			final AnnotationElementType aet = new AnnotationElementType();
+			eList.add(aet);
+			
+			aet.setName(name);
+			aet.setType(value.getClass().getName());
+			aet.setIsArray(false);
+			
+			final List<AnnotationElementValueType> aetvList = aet.getValue();
+            AnnotationElementValueType aetv = new AnnotationElementValueType();
+            aetvList.add(aetv);
+            aetv.setSimpleValue(value.toString()); // TODO: Update schema to handle objects 
 		}
+		
 		@Override
 		public void visitEnum(String name, String desc, String value) {
 			super.visitEnum(name, desc, value);
 		}
+		
 		@Override
 		public AnnotationVisitor visitAnnotation(String name, String desc) {
-			return super.visitAnnotation(name, desc);
+		    AnnotationVisitor av = super.visitAnnotation(name, desc);
+		    return av;
 		}
+		
 		@Override
 		public AnnotationVisitor visitArray(String name) {
-			return super.visitArray(name);
+		    final List<AnnotationElementType> eList = ait.getElement();           
+            final AnnotationElementType aet = new AnnotationElementType();
+            eList.add(aet);
+            
+            aet.setName(name);
+            aet.setType(""); // TODO: Required by the schema, set empty for now.
+            aet.setIsArray(true);          
+		    
+            CAElementAnnotationVisitor av = new CAElementAnnotationVisitor(aet, name);
+            return av;
 		}
+		
 		@Override
 		public void visitEnd() {
 			super.visitEnd();
-		}
-		
-		
+		}	
+	}
+	
+	private class CAElementAnnotationVisitor extends AnnotationVisitor {
+	    private final AnnotationElementType aet;
+	    private final String name;
+	    
+	    public CAElementAnnotationVisitor(AnnotationElementType aet, String name) {
+            super(Opcodes.ASM6);
+            this.aet = aet;
+            this.name = name;
+        }
+	    
+	    @Override
+        public void visit(String name, Object value) {
+            super.visit(name, value);
+            
+            final List<AnnotationElementValueType> aetvList = aet.getValue();
+            AnnotationElementValueType aetv = new AnnotationElementValueType();
+            aetv.setSimpleValue(value.toString()); // TODO: Update schema to handle objects 
+            aetvList.add(aetv);
+            
+        }
+
+        @Override
+        public void visitEnum(String name, String desc, String value) {
+            super.visitEnum(name, desc, value);
+        }
+
+        @Override
+        public AnnotationVisitor visitAnnotation(String name, String desc) {
+            AnnotationVisitor av = super.visitAnnotation(name, desc);
+            return av;
+        }
+
+        @Override
+        public AnnotationVisitor visitArray(String name) {
+            AnnotationVisitor av = super.visitArray(name);
+            return av;
+        }
+
+        @Override
+        public void visitEnd() {
+            super.visitEnd();
+        }
 	}
 }

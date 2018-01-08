@@ -82,6 +82,8 @@ public final class AsmHelper {
 	public static final List<ModifierType> resolveAsmOpcode(RoleFilter filter, int opcode) {
 		final List<ModifierType> retList = new ArrayList<ModifierType>();
 		
+		// Modifiers associated with Classes, Fields, and Methods
+		
 		if (0 != (Opcodes.ACC_ABSTRACT & opcode)) {
 			retList.add(ModifierType.ABSTRACT);
 		}
@@ -103,9 +105,15 @@ public final class AsmHelper {
 		}
 		
 		if (RoleFilter.CLASS == filter) {
-			// The above are the OpCodes suitable for MpdifierType items associated with Classes
+			// The above are the OpCodes suitable for ModifierType items associated with Classes
 			return retList;
 		}
+		
+		// Modifiers associated with Fields and Methods
+		
+		if (0 != (Opcodes.ACC_STATIC & opcode)) {
+            retList.add(ModifierType.STATIC);
+        }
 		
 		return retList;
 	}

@@ -26,6 +26,7 @@ import org.junit.Test;
 
 import com.ibm.ws.jpa.diagnostics.orm.ano.EntityMappingsScannerResults;
 import com.ibm.ws.jpa.diagnostics.orm.ano.jaxb.classinfo10.AnnotationElementType;
+import com.ibm.ws.jpa.diagnostics.orm.ano.jaxb.classinfo10.AnnotationElementValueType;
 import com.ibm.ws.jpa.diagnostics.orm.ano.jaxb.classinfo10.AnnotationInfoType;
 import com.ibm.ws.jpa.diagnostics.orm.ano.jaxb.classinfo10.ClassInfoType;
 import com.ibm.ws.jpa.diagnostics.orm.ano.jaxb.classinfo10.ClassInformationType;
@@ -177,11 +178,7 @@ public class TestWARScanner {
                 passedExpectedClasses[0] = verifyTestEntity(citEntry);
             } else if (expectedClassNames[1].equals(clsName)) {
                 // Testing com.ibm.jpascanner.testapp.jee7.simple.webapp.TestServlet
-                passedExpectedClasses[1] = true;
-                
-                List<AnnotationInfoType> attList = citEntry.getAnnotations().getAnnotation();
-                assertNotNull(attList);
-                assertEquals(1, attList.size());
+                passedExpectedClasses[1] = verifyTestServlet(citEntry);
             } else {
                 fail("Found unexpected Class Entry " + clsName);
             }
@@ -377,6 +374,163 @@ public class TestWARScanner {
                 testExpectedModifiers(expectedMethodModifiersArr, mitEntry.getModifiers());
                 
                 expectedMethodNamesPassed[9] = true;
+            } else {
+                fail("Unexpected method " + mitEntry.getMethodName() + " encountered.");
+            }
+        }
+        
+        int midx = 0;
+        for (boolean b : expectedMethodNamesPassed) {
+            assertTrue("Test " + expectedMethodNames[midx++], b);
+        }
+        
+        return true;
+    }
+    
+    /**
+     * Verifies expected ClassInfoType for type "com.ibm.jpascanner.testapp.jee7.simple.webapp.TestServlet"
+     */
+    private static boolean verifyTestServlet(ClassInfoType citEntry) throws Exception {
+        // Verify that the class is Public, and that there are no other modifiers
+        ModifiersType modType = citEntry.getModifiers();
+        assertNotNull(modType);
+        List<ModifierType> modList = modType.getModifier();
+        assertNotNull(modList);
+        assertEquals(1, modList.size());
+        assertTrue(modList.contains(ModifierType.PUBLIC));    
+        
+        // Verify that the class has no declared interfaces
+        InterfacesType ift = citEntry.getInterfaces();
+        assertNull(ift);              
+
+        // Verify class annotation @WebServlet
+        List<AnnotationInfoType> attList = citEntry.getAnnotations().getAnnotation();
+        assertNotNull(attList);
+        assertEquals(1, attList.size());
+        
+        AnnotationInfoType ait = attList.get(0);
+        assertNotNull(ait);
+        assertEquals("WebServlet", ait.getName());
+        assertEquals("javax.servlet.annotation.WebServlet", ait.getType());
+        
+        // @Servlet has 2 associated elements, name and urlPatterns
+        List<AnnotationElementType> aetList = ait.getElement();
+        assertNotNull(aetList);
+        assertEquals(2, aetList.size());
+        
+        final String[] expectedElementNames = { "name", "urlPatterns"};
+        final boolean[] expectedElementNamesPassed = { false, false };
+        
+        for (AnnotationElementType aet : aetList) {
+            if (expectedElementNames[0].equals(aet.getName())) {
+                // Testing "name"
+                
+                assertFalse(aet.isIsArray());
+                
+                assertEquals("java.lang.String", aet.getType());
+                List<AnnotationElementValueType> valueList = aet.getValue();
+                assertEquals(1, valueList.size());
+                AnnotationElementValueType aetvt = valueList.get(0);
+                assertEquals(aetvt.getSimpleValue(), "TestServlet");
+                
+                
+                expectedElementNamesPassed[0] = true;
+            } else if (expectedElementNames[1].equals(aet.getName())) {
+                // Testing "urlPatterns"
+                
+                assertTrue(aet.isIsArray());
+                
+                List<AnnotationElementValueType> valueList = aet.getValue();
+                assertEquals(1, valueList.size());
+                AnnotationElementValueType aetvt = valueList.get(0);
+                assertEquals(aetvt.getSimpleValue(), "/TestServlet");
+                
+                expectedElementNamesPassed[1] = true;
+            } else {
+                fail("Found unexpected Annotation Element Entry " + aet.getName());
+            }
+        }
+        
+        
+        // Verify Class Fields
+        FieldsType fit = citEntry.getFields();
+        assertNotNull(fit);
+        
+        List<FieldInfoType> fitList = fit.getField();
+        assertNotNull(fitList);
+        assertEquals(3, fitList.size());
+        
+        final String[] expectedFieldNames = { "serialVersionUID", "em", "tx" };
+        final boolean[] expectedFieldNamesPassed = { false, false, false };
+        
+        final ModifierType[] expectedFieldModifiersArr = { ModifierType.PRIVATE };
+        
+        for (FieldInfoType fitEntry : fitList) {
+            if (expectedFieldNames[0].equals(fitEntry.getName())) {
+                // Testing "serialVersionUID"               
+                assertEquals("long", fitEntry.getType());
+                testExpectedModifiers(new ModifierType[] { ModifierType.PRIVATE, ModifierType.FINAL, ModifierType.STATIC }, fitEntry.getModifiers());
+                
+                expectedFieldNamesPassed[0] = true;
+            } else if (expectedFieldNames[1].equals(fitEntry.getName())) {
+                // Testing "em"
+                assertEquals("javax.persistence.EntityManager", fitEntry.getType());
+                testExpectedModifiers(expectedFieldModifiersArr, fitEntry.getModifiers());
+                
+                // Verify field annotation @PersistenceContext
+                List<AnnotationInfoType> fattList = fitEntry.getAnnotations().getAnnotation();
+                assertNotNull(fattList);
+                assertEquals(1, fattList.size());
+                
+                AnnotationInfoType fait = fattList.get(0);
+                assertNotNull(fait);
+                assertEquals("PersistenceContext", fait.getName());
+                assertEquals("javax.persistence.PersistenceContext", fait.getType());
+                
+                expectedFieldNamesPassed[1] = true;
+            } else if (expectedFieldNames[2].equals(fitEntry.getName())) {
+                // Testing "tx"
+                assertEquals("javax.transaction.UserTransaction", fitEntry.getType());
+                testExpectedModifiers(expectedFieldModifiersArr, fitEntry.getModifiers());
+                
+                expectedFieldNamesPassed[2] = true;
+            } else {
+                fail("Found unexpected Field Entry " + fitEntry.getName());
+            }
+        }
+        
+        int fidx = 0;
+        for (boolean b : expectedFieldNamesPassed) {
+            assertTrue("Test " + expectedFieldNamesPassed[fidx++], b);
+        }
+        
+        // Verify Class Methods
+        MethodsType mit = citEntry.getMethods();
+        assertNotNull(mit);
+        
+        List<MethodInfoType> mitList = mit.getMethod();
+        assertNotNull(mitList);
+        assertEquals(3, mitList.size());
+        
+        final String[] expectedMethodNames = { "<init>", "doGet", "doPost"};
+        final boolean[] expectedMethodNamesPassed = { false, false, false };
+                
+        for (MethodInfoType mitEntry : mitList) {
+            if (expectedMethodNames[0].equals(mitEntry.getMethodName())) {
+                // Testing "init" (ctor)
+                testExpectedModifiers(new ModifierType[] { ModifierType.PUBLIC }, mitEntry.getModifiers());
+                
+                expectedMethodNamesPassed[0] = true;
+            } else if (expectedMethodNames[1].equals(mitEntry.getMethodName())) {
+                // Testing "getId"
+                testExpectedModifiers(new ModifierType[] { ModifierType.PROTECTED }, mitEntry.getModifiers());
+                
+                expectedMethodNamesPassed[1] = true;
+            } else if (expectedMethodNames[2].equals(mitEntry.getMethodName())) {
+                // Testing "setId"
+                testExpectedModifiers(new ModifierType[] { ModifierType.PROTECTED }, mitEntry.getModifiers());
+                
+                expectedMethodNamesPassed[2] = true;
             } else {
                 fail("Unexpected method " + mitEntry.getMethodName() + " encountered.");
             }
