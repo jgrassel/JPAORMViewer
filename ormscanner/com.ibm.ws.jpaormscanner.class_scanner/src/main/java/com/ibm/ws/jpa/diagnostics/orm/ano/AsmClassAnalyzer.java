@@ -99,6 +99,7 @@ public class AsmClassAnalyzer {
 				}
 			}	
 			
+			cit.setVersion(version);
 			cit.setIsAnonymous(false);			
 			cit.setIsEnum((access & Opcodes.ACC_ENUM) != 0);
 			cit.setIsInterface((access & Opcodes.ACC_INTERFACE) != 0);

@@ -13,10 +13,14 @@ package com.ibm.ws.jpa.diagnostics.tools.appscanner;
 
 import static org.junit.Assert.*;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.List;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -172,6 +176,16 @@ public class TestWARScanner {
         for (ClassInfoType citEntry : citList) {
             String clsName = citEntry.getClassName();
             assertNotNull(clsName);
+            
+            // Print to screen
+            JAXBContext jc = JAXBContext.newInstance(ClassInfoType.class);
+            Marshaller marshaller = jc.createMarshaller();  
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+            
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            marshaller.marshal(citEntry, baos);
+            System.out.println(baos.toString());
+            System.out.println();
             
             if (expectedClassNames[0].equals(clsName)) {
                 // Testing com.ibm.jpascanner.testapp.jee7.simple.webapp.TestEntity               

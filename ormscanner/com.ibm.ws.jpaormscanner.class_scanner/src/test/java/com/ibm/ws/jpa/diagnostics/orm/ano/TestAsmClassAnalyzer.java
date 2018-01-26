@@ -2,6 +2,7 @@ package com.ibm.ws.jpa.diagnostics.orm.ano;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -82,6 +83,7 @@ public class TestAsmClassAnalyzer {
 		assertEquals("com.ibm.ws.jpa.diagnostics.orm.ano.testentities.SimpleJPAEntity", cit.getClassName());
 		assertEquals("com.ibm.ws.jpa.diagnostics.orm.ano.testentities", cit.getPackageName());
 		assertEquals("java.lang.Object", cit.getSuperclassName());
+		assertNotEquals(0, cit.getVersion());
 
 		assertFalse(cit.isIsAnonymous());
 		assertFalse(cit.isIsEnum());
