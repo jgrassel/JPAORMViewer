@@ -12,9 +12,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -58,42 +62,129 @@ public class TestAsmClassAnalyzer {
 	@Test
 	public void testAsmClassAnalyzerWithSimpleJPAEntity() throws Exception {
 		// Find SimpleJPAEntity.class in a way that works in both command line gradle and in eclipse
-		final File[] targetFile = new File[1];
+		final File[] targetFile = new File[3];
+		
+		// TODO: Update to combine search for 3 files into one walk
 		Files.walk(Paths.get(cDir.getAbsolutePath()))
 		.filter(p -> p.getFileName().toString().equals("SimpleJPAEntity.class"))
 		.forEach(p -> targetFile[0] = p.toFile());
+		
+		Files.walk(Paths.get(cDir.getAbsolutePath()))
+        .filter(p -> p.getFileName().toString().equals("SimpleJPAEntity$DumbInnerClass.class"))
+        .forEach(p -> targetFile[1] = p.toFile());
+		
+		Files.walk(Paths.get(cDir.getAbsolutePath()))
+        .filter(p -> p.getFileName().toString().equals("SimpleJPAEntity$1.class"))
+        .forEach(p -> targetFile[2] = p.toFile());
 
 		Assert.assertNotNull(targetFile[0]);
-
+		Assert.assertNotNull(targetFile[1]);
+		Assert.assertNotNull(targetFile[2]);
+		
+		InnerOuterResolver ioResolver = new InnerOuterResolver();
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-		try (FileInputStream fis = new FileInputStream(targetFile[0])) {
-			byte[] buffer = new byte[4096];
-			int bytesRead;  		
-			do {
-				bytesRead = fis.read(buffer);
-				if (bytesRead > 0)
-					baos.write(buffer, 0, bytesRead);
-			} while (bytesRead >= 0);
-		}
-
-		ClassInfoType cit = AsmClassAnalyzer.analyzeClass("", baos.toByteArray());
-		Assert.assertNotNull(cit);
-
-		assertEquals("com.ibm.ws.jpa.diagnostics.orm.ano.testentities.SimpleJPAEntity", cit.getClassName());
-		assertEquals("com.ibm.ws.jpa.diagnostics.orm.ano.testentities", cit.getPackageName());
-		assertEquals("java.lang.Object", cit.getSuperclassName());
-		assertNotEquals(0, cit.getVersion());
-
-		assertFalse(cit.isIsAnonymous());
-		assertFalse(cit.isIsEnum());
-		assertFalse(cit.isIsInterface());
-		assertFalse(cit.isIsSynthetic());
-		assertEquals(1, cit.getModifiers().getModifier().size());
-		assertTrue(cit.getModifiers().getModifier().contains(ModifierType.PUBLIC));
+		ClassInfoType citSimpleJPAEntity = null;
+		ClassInfoType citDumbInnerClass = null;
+		ClassInfoType citInnerClass1 = null;
 		
-		// Test Class Annotations
-		final AnnotationsType classAnnos = cit.getAnnotations();
+		{
+		    // Test SimpleJPAEntity
+		    try (FileInputStream fis = new FileInputStream(targetFile[0])) {
+	            byte[] buffer = new byte[4096];
+	            int bytesRead;          
+	            do {
+	                bytesRead = fis.read(buffer);
+	                if (bytesRead > 0)
+	                    baos.write(buffer, 0, bytesRead);
+	            } while (bytesRead >= 0);
+	        }
+
+	        ClassInfoType cit = AsmClassAnalyzer.analyzeClass("", baos.toByteArray(), ioResolver);
+	        Assert.assertNotNull(cit);
+	        testSimpleEntityClass(cit);
+//	        dumpClassXML(cit);
+	        
+	        citSimpleJPAEntity = cit;
+	        baos.reset();
+		}
+		
+		{
+		    // Test SimpleJPAEntity$DumbInnerClass
+		    try (FileInputStream fis = new FileInputStream(targetFile[1])) {
+                byte[] buffer = new byte[4096];
+                int bytesRead;          
+                do {
+                    bytesRead = fis.read(buffer);
+                    if (bytesRead > 0)
+                        baos.write(buffer, 0, bytesRead);
+                } while (bytesRead >= 0);
+            }
+
+            ClassInfoType cit = AsmClassAnalyzer.analyzeClass("", baos.toByteArray(), ioResolver);
+            Assert.assertNotNull(cit);
+            
+//            dumpClassXML(cit);
+            citDumbInnerClass = cit;
+            baos.reset();
+		}
+		
+		{
+            // Test SimpleJPAEntity$1
+		    try (FileInputStream fis = new FileInputStream(targetFile[2])) {
+                byte[] buffer = new byte[4096];
+                int bytesRead;          
+                do {
+                    bytesRead = fis.read(buffer);
+                    if (bytesRead > 0)
+                        baos.write(buffer, 0, bytesRead);
+                } while (bytesRead >= 0);
+            }
+
+            ClassInfoType cit = AsmClassAnalyzer.analyzeClass("", baos.toByteArray(), ioResolver);
+            Assert.assertNotNull(cit);
+            
+//            dumpClassXML(cit);
+            citInnerClass1 = cit;
+            baos.reset();
+        }
+		
+		// Test InnerOuterResolver
+		List<ClassInfoType> citList = new ArrayList<ClassInfoType>();
+		citList.add(citSimpleJPAEntity);
+		citList.add(citDumbInnerClass);
+		citList.add(citInnerClass1);
+		ioResolver.resolve(citList);
+		
+		dumpClassXML(citSimpleJPAEntity);
+	}
+	
+	private void dumpClassXML(ClassInfoType cit) throws Exception {
+	    JAXBContext jc = JAXBContext.newInstance(ClassInfoType.class);
+        Marshaller marshaller = jc.createMarshaller();  
+        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+        
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        marshaller.marshal(cit, baos);
+        System.out.println(baos.toString());
+        System.out.println();
+	}
+	
+	private void testSimpleEntityClass(ClassInfoType cit) {
+	    assertEquals("com.ibm.ws.jpa.diagnostics.orm.ano.testentities.SimpleJPAEntity", cit.getClassName());
+        assertEquals("com.ibm.ws.jpa.diagnostics.orm.ano.testentities", cit.getPackageName());
+        assertEquals("java.lang.Object", cit.getSuperclassName());
+        assertNotEquals(0, cit.getVersion());
+
+        assertFalse(cit.isIsAnonymous());
+        assertFalse(cit.isIsEnum());
+        assertFalse(cit.isIsInterface());
+        assertFalse(cit.isIsSynthetic());
+        assertEquals(1, cit.getModifiers().getModifier().size());
+        assertTrue(cit.getModifiers().getModifier().contains(ModifierType.PUBLIC));
+        
+        // Test Class Annotations
+        final AnnotationsType classAnnos = cit.getAnnotations();
         assertNotNull(classAnnos);
         final List<AnnotationInfoType> clsAnnoList = classAnnos.getAnnotation();       
         assertNotNull(clsAnnoList);
@@ -102,8 +193,8 @@ public class TestAsmClassAnalyzer {
         assertNotNull(clsAit);
         assertEquals("Entity", clsAit.getName());
         assertEquals("javax.persistence.Entity", clsAit.getType());
-		
-		// Test Class Fields
+        
+        // Test Class Fields
         final FieldsType ft = cit.getFields();
         assertNotNull(ft);
         
@@ -463,6 +554,5 @@ public class TestAsmClassAnalyzer {
         ClassInfoType innerCit = ictList.get(0);
         assertNotNull(innerCit);
         assertEquals("com.ibm.ws.jpa.diagnostics.orm.ano.testentities.SimpleJPAEntity$DumbInnerClass", innerCit.getClassName());
-
 	}
 }

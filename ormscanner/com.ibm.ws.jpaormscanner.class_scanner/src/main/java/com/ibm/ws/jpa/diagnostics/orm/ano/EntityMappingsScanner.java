@@ -45,6 +45,7 @@ public final class EntityMappingsScanner {
 
     private final URL targetArchive;
     private final ClassLoader scannerCL;
+    private final InnerOuterResolver ioResolver = new InnerOuterResolver();
 
     private EntityMappingsScanner(URL targetArchive, ClassLoader scannerCL) {
         this.targetArchive = targetArchive;
@@ -99,6 +100,8 @@ public final class EntityMappingsScanner {
         ClassInformationType cit = new ClassInformationType();
         List<ClassInfoType> citList = cit.getClassInfo();
         citList.addAll(citSet);
+        
+        ioResolver.resolve(citList);
 
         return cit;
     }
@@ -175,7 +178,7 @@ public final class EntityMappingsScanner {
             byte[] classByteCode = baos.toByteArray();
             baos.reset();
 
-            return AsmClassAnalyzer.analyzeClass(cName, classByteCode);
+            return AsmClassAnalyzer.analyzeClass(cName, classByteCode, ioResolver);
         } catch (Throwable t) {
             throw new ClassScannerException(t);
         }

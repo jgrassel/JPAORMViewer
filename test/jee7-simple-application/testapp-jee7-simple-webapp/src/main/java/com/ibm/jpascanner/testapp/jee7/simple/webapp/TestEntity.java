@@ -3,9 +3,15 @@ package com.ibm.jpascanner.testapp.jee7.simple.webapp;
 import javax.persistence.Basic;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Version;
 
 @Entity
+@NamedQueries( {
+    @NamedQuery(name="FindAll", query="SELECT t FROM TestEntity t"),
+    @NamedQuery(name="FindByName", query="SELECT t from TestEntity t WHERE t.id = :id")
+})
 public class TestEntity {
     @Id
     private long id;

@@ -44,24 +44,26 @@ import com.ibm.ws.jpa.diagnostics.orm.ano.jaxb.classinfo10.ParametersType;
 public class AsmClassAnalyzer {
 	private final static String JavaLangObject = "java.lang.Object";
 	
-	public static final ClassInfoType analyzeClass(String targetClass, byte[] bytecode) throws ClassScannerException {
-		
-		AsmClassAnalyzer ca = new AsmClassAnalyzer(bytecode);
+	public static final ClassInfoType analyzeClass(String targetClass, byte[] bytecode, InnerOuterResolver ioResolver) throws ClassScannerException {
+		if (bytecode == null || bytecode.length == 0) {
+		    throw new ClassScannerException("Bytecode is required.");
+		}
+		AsmClassAnalyzer ca = new AsmClassAnalyzer(bytecode, ioResolver);
 		return ca.analyze();
 	}
 	
-	private byte[] bytecode;
-	private ClassInfoType cit;
+	final private byte[] bytecode;
+    final private InnerOuterResolver ioResolver;
+	final private ClassInfoType cit = new ClassInfoType();
 	
-	private AsmClassAnalyzer(byte[] bytecode) {
+	private AsmClassAnalyzer(byte[] bytecode, InnerOuterResolver ioResolver) {
 		this.bytecode = bytecode;
+		this.ioResolver = ioResolver;
 	}
 	
 	private ClassInfoType analyze() throws ClassScannerException {
 		ClassReader cr = new ClassReader(bytecode);
 		CAClassVisitor cacv = new CAClassVisitor();
-		
-		cit = new ClassInfoType();
 		cr.accept(cacv, 0);
 		
 		return cit;
@@ -76,7 +78,7 @@ public class AsmClassAnalyzer {
 		public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
 			super.visit(version, access, name, signature, superName, interfaces);
 			
-			String adjustedName = AsmHelper.normalizeClassName(name);
+			final String adjustedName = AsmHelper.normalizeClassName(name);
 			cit.setClassName(adjustedName);
 			cit.setPackageName(AsmHelper.extractPackageName(adjustedName));	
 			
@@ -86,7 +88,7 @@ public class AsmClassAnalyzer {
 				cit.setSuperclassName(JavaLangObject);
 			}
 			
-			ModifiersType modTypes = new ModifiersType();
+			final ModifiersType modTypes = new ModifiersType();
 			modTypes.getModifier().addAll(AsmHelper.resolveAsmOpcode(AsmHelper.RoleFilter.CLASS, (access)));
 			cit.setModifiers(modTypes);
 			
@@ -255,11 +257,20 @@ public class AsmClassAnalyzer {
 		@Override
 		public void visitOuterClass(String owner, String name, String desc) {
 			super.visitOuterClass(owner, name, desc);
+			
+			// Name is the name of the method enclosing the class if there is one, null otherwise.
+			if (ioResolver != null) {
+			    ioResolver.addUnresolvedOuterClassReference(cit, AsmHelper.normalizeClassName(owner));
+            }
 		}
 
 		@Override
 		public void visitInnerClass(String name, String outerName, String innerName, int access) {
 			super.visitInnerClass(name, outerName, innerName, access);
+			
+			if (outerName == null || !AsmHelper.normalizeClassName(outerName).equals(cit.getClassName())) {
+			    return;
+			}
 			
 			InnerClassesType ict = cit.getInnerclasses();
 	        if (ict == null) {
@@ -272,6 +283,10 @@ public class AsmClassAnalyzer {
 	        innerClassesList.add(innerCit);
 	        
 	        innerCit.setClassName(AsmHelper.normalizeClassName(name));
+	        
+	        if (ioResolver != null) {
+	            ioResolver.addUnresolvedInnerClassReference(cit, innerCit.getClassName());
+	        }
 		}	
 	}
 	
@@ -415,7 +430,25 @@ public class AsmClassAnalyzer {
         @Override
         public AnnotationVisitor visitAnnotation(String name, String desc) {
             AnnotationVisitor av = super.visitAnnotation(name, desc);
-            return av;
+            
+            List<AnnotationElementValueType> aetvtList = aet.getValue();
+            AnnotationElementValueType aevt = new AnnotationElementValueType();
+            aetvtList.add(aevt);
+                       
+            AnnotationInfoType ait = new AnnotationInfoType();
+            aevt.setAnnotation(ait);
+            
+            final Type type = Type.getType(desc);
+            if (type != null) {
+                    String processedName = AsmHelper.normalizeClassName(type.getClassName());
+                    ait.setName(AsmHelper.extractSimpleClassName(processedName));                   
+                    ait.setType(processedName);
+            }
+            
+            return new CAAnnotationVisitor(ait, desc, false);
+            
+            //
+//            return av;
         }
 
         @Override

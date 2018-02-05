@@ -221,19 +221,87 @@ public class TestWARScanner {
         InterfacesType ift = citEntry.getInterfaces();
         assertNull(ift);              
 
-        // Verify class annotation @Entity
+        // Verify class annotation @Entity and @NamedQueries
         List<AnnotationInfoType> attList = citEntry.getAnnotations().getAnnotation();
         assertNotNull(attList);
-        assertEquals(1, attList.size());
+        assertEquals(2, attList.size());
         
-        AnnotationInfoType ait = attList.get(0);
-        assertNotNull(ait);
-        assertEquals("Entity", ait.getName());
-        assertEquals("javax.persistence.Entity", ait.getType());
-        
-        List<AnnotationElementType> aetList = ait.getElement();
-        assertNotNull(aetList);
-        assertEquals(0, aetList.size());
+        final boolean[] classAnnos = { false, false };
+        for (AnnotationInfoType ait : attList) {
+            if ("javax.persistence.Entity".equals(ait.getType())) {
+                assertEquals("Entity", ait.getName());
+                
+                List<AnnotationElementType> aetList = ait.getElement();
+                assertNotNull(aetList);
+                assertEquals(0, aetList.size());
+                
+                classAnnos[0] = true;
+            } else if ("javax.persistence.NamedQueries".equals(ait.getType())){
+                assertEquals("NamedQueries", ait.getName());
+                
+                final List<AnnotationElementType> aetList = ait.getElement();
+                assertNotNull(aetList);
+                assertEquals(1, aetList.size());
+                
+                final AnnotationElementType subAet = aetList.get(0);
+                assertNotNull(subAet);
+                assertTrue(subAet.isIsArray());
+                final List<AnnotationElementValueType> saAevtList = subAet.getValue();
+                assertNotNull(saAevtList);
+                assertEquals(2, saAevtList.size());
+                
+                Boolean[] nqFound = { null, null }; // FindAll , FindByName
+                for (AnnotationElementValueType aevt : saAevtList) {
+                    AnnotationInfoType nqAit = aevt.getAnnotation();
+                    assertNotNull(nqAit);
+                    
+                    assertEquals("NamedQuery", nqAit.getName());
+                    assertEquals("javax.persistence.NamedQuery", nqAit.getType());
+                    
+                    final List<AnnotationElementType> nqAetList = nqAit.getElement();
+                    assertNotNull(nqAetList);
+                    assertEquals(2, nqAetList.size());
+                    
+                    for (AnnotationElementType nqAet : nqAetList) {
+                        assertEquals("java.lang.String", nqAet.getType());
+                        assertFalse(nqAet.isIsArray());
+                        if ("name".equals(nqAet.getName()) && "FindAll".equals(nqAet.getValue().get(0).getSimpleValue())) {
+                            if (nqFound[0] == null) {
+                                nqFound[0] = Boolean.FALSE;
+                            } else if (nqFound[0] == Boolean.FALSE) {
+                                nqFound[0] = Boolean.TRUE;
+                            }
+                        } else if ("name".equals(nqAet.getName()) && "FindByName".equals(nqAet.getValue().get(0).getSimpleValue())) {
+                            if (nqFound[1] == null) {
+                                nqFound[1] = Boolean.FALSE;
+                            } else if (nqFound[1] == Boolean.FALSE) {
+                                nqFound[1] = Boolean.TRUE;
+                            }
+                        } else if ("query".equals(nqAet.getName()) && "SELECT t FROM TestEntity t".equals(nqAet.getValue().get(0).getSimpleValue())) {
+                            if (nqFound[0] == null) {
+                                nqFound[0] = Boolean.FALSE;
+                            } else if (nqFound[0] == Boolean.FALSE) {
+                                nqFound[0] = Boolean.TRUE;
+                            }
+                        } else if ("query".equals(nqAet.getName()) && "SELECT t from TestEntity t WHERE t.id = :id".equals(nqAet.getValue().get(0).getSimpleValue())) {
+                            if (nqFound[1] == null) {
+                                nqFound[1] = Boolean.FALSE;
+                            } else if (nqFound[1] == Boolean.FALSE) {
+                                nqFound[1] = Boolean.TRUE;
+                            }
+                        }
+                    }
+                }
+                
+                assertEquals(Boolean.TRUE, nqFound[0]);
+                assertEquals(Boolean.TRUE, nqFound[1]);
+                classAnnos[1] = true;
+            }
+        }
+        int cidx = 0;
+        for (boolean b : classAnnos) {
+            assertTrue("Test " + classAnnos[cidx++], b);
+        }
         
         // Verify Class Fields
         FieldsType fit = citEntry.getFields();
