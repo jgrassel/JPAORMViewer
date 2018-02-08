@@ -16,19 +16,16 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * Type that contains zero or more exception items.
- * 
- * <p>Java class for ExceptionsType complex type.
+ * <p>Java class for PropertiesType complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="ExceptionsType">
+ * &lt;complexType name="PropertiesType">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="exception" type="{ClassInfo_1.0}ExceptionType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="properties" type="{ClassInfo_1.0}PropertiesType" minOccurs="0"/>
+ *         &lt;element name="property" type="{ClassInfo_1.0}PropertyType" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -38,66 +35,40 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "ExceptionsType", propOrder = {
-    "exception",
-    "properties"
+@XmlType(name = "PropertiesType", propOrder = {
+    "property"
 })
-public class ExceptionsType {
+public class PropertiesType {
 
-    protected List<ExceptionType> exception;
-    protected PropertiesType properties;
+    protected List<PropertyType> property;
 
     /**
-     * Gets the value of the exception property.
+     * Gets the value of the property property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the exception property.
+     * This is why there is not a <CODE>set</CODE> method for the property property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getException().add(newItem);
+     *    getProperty().add(newItem);
      * </pre>
      * 
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link ExceptionType }
+     * {@link PropertyType }
      * 
      * 
      */
-    public List<ExceptionType> getException() {
-        if (exception == null) {
-            exception = new ArrayList<ExceptionType>();
+    public List<PropertyType> getProperty() {
+        if (property == null) {
+            property = new ArrayList<PropertyType>();
         }
-        return this.exception;
-    }
-
-    /**
-     * Gets the value of the properties property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link PropertiesType }
-     *     
-     */
-    public PropertiesType getProperties() {
-        return properties;
-    }
-
-    /**
-     * Sets the value of the properties property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link PropertiesType }
-     *     
-     */
-    public void setProperties(PropertiesType value) {
-        this.properties = value;
+        return this.property;
     }
 
 }

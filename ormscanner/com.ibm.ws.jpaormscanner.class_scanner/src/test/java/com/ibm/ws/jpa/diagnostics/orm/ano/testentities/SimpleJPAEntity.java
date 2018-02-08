@@ -13,6 +13,7 @@ package com.ibm.ws.jpa.diagnostics.orm.ano.testentities;
 
 import javax.persistence.Basic;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.Version;
 
@@ -25,12 +26,13 @@ public class SimpleJPAEntity {
     private int version;
     
     @Basic
+    @TestAnnotationWithEnumArray(getSacrifices = { SacrificialEnum.YOU, SacrificialEnum.GO, SacrificialEnum.FIRST })
     private String persistentString;
     
-    @Basic
+    @Basic(optional=false)
     private int persistentInteger;
     
-    @Basic
+    @Basic(fetch=FetchType.LAZY)
     private Integer persistentIntegerWrapper;
     
     public SimpleJPAEntity() {

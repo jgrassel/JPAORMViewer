@@ -1,50 +1,83 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Copyright (c) 2017 IBM Corporation and others. All rights reserved. 
-     This program and the accompanying materials are made available under the terms of the Eclipse Public 
-     License v1.0 which accompanies this distribution, and is available at 
-     http://www.eclipse.org/legal/epl-v10.html 
-     
-     Contributors: IBM Corporation - initial API and implementation 
--->
-<schema xmlns="http://www.w3.org/2001/XMLSchema" 
-        targetNamespace="ClassInfo_1.0"
-        xmlns:tns="ClassInfo_1.0"
-        elementFormDefault="qualified">
+<!-- Copyright (c) 2017 IBM Corporation and others. All rights reserved. This program and the accompanying materials are 
+   made available under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
+   http://www.eclipse.org/legal/epl-v10.html Contributors: IBM Corporation - initial API and implementation -->
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="ClassInfo_1.0" xmlns:tns="ClassInfo_1.0"
+   elementFormDefault="qualified">
 
    <element name="ClassInformation" type="tns:ClassInformationType" />
+   <element name="ClassInfo" type="tns:ClassInfoType" />
 
    <complexType name="ClassInformationType">
       <sequence>
          <element name="classInfo" type="tns:ClassInfoType" minOccurs="0" maxOccurs="unbounded" />
+         <element name="properties" type="tns:PropertiesType" minOccurs="0" maxOccurs="1" />
       </sequence>
    </complexType>
 
    <!-- Common Elements -->
    <complexType name="ModifiersType">
+      <annotation>
+         <documentation>Type that contains zero or more modifier items.</documentation>
+      </annotation>
       <sequence>
-         <element name="modifier" type="tns:ModifierType" maxOccurs="unbounded" />
+         <element name="modifier" type="tns:ModifierType" minOccurs="0" maxOccurs="unbounded" />
+         <element name="properties" type="tns:PropertiesType" minOccurs="0" maxOccurs="1" />
       </sequence>
    </complexType>
 
    <simpleType name="ModifierType">
       <restriction base="string">
-         <enumeration value="ABSTRACT" />
-         <enumeration value="FINAL" />
-         <enumeration value="INTERFACE" />
-         <enumeration value="NATIVE" />
-         <enumeration value="PRIVATE" />
-         <enumeration value="PROTECTED" />
-         <enumeration value="PUBLIC" />
-         <enumeration value="STATIC" />
-         <enumeration value="STRICT" />
-         <enumeration value="SYNCHRONIZED" />
-         <enumeration value="TRANSIENT" />
-         <enumeration value="VOLATILE" />
+         <enumeration value="ABSTRACT">
+            <annotation>
+               <documentation>Corresponds with the java “abstract” keyword.</documentation>
+            </annotation>
+         </enumeration>
+         <enumeration value="FINAL">
+            <annotation>
+               <documentation>Corresponds with the java “final” keyword.</documentation>
+            </annotation>
+         </enumeration>
+         <enumeration value="NATIVE" >
+            <annotation>
+               <documentation>Corresponds with the java “native” keyword.</documentation>
+            </annotation></enumeration>
+         <enumeration value="PRIVATE" >
+            <annotation>
+               <documentation>Corresponds with the java “private” keyword.</documentation>
+            </annotation></enumeration>
+         <enumeration value="PROTECTED" >
+            <annotation>
+               <documentation>Corresponds with the java “protected” keyword.</documentation>
+            </annotation></enumeration>
+         <enumeration value="PUBLIC" >
+            <annotation>
+               <documentation>Corresponds with the java “public” keyword.</documentation>
+            </annotation></enumeration>
+         <enumeration value="STATIC" >
+            <annotation>
+               <documentation>Corresponds with the java “static” keyword.</documentation>
+            </annotation></enumeration>
+         <enumeration value="SYNCHRONIZED" >
+            <annotation>
+               <documentation>Corresponds with the java “synchronized” keyword.</documentation>
+            </annotation></enumeration>
+         <enumeration value="TRANSIENT" >
+            <annotation>
+               <documentation>Corresponds with the java “transient” keyword.</documentation>
+            </annotation></enumeration>
+         <enumeration value="VOLATILE" >
+            <annotation>
+               <documentation>Corresponds with the java “volatile” keyword.</documentation>
+            </annotation></enumeration>
       </restriction>
    </simpleType>
 
    <!-- Complex Types describing Java Classes -->
    <complexType name="ClassInfoType">
+      <annotation>
+         <documentation>A type that describes a java class.</documentation>
+      </annotation>
       <sequence>
          <element name="modifiers" type="tns:ModifiersType" minOccurs="0" maxOccurs="1" />
          <element name="annotations" type="tns:AnnotationsType" minOccurs="0" maxOccurs="1" />
@@ -52,34 +85,84 @@
          <element name="fields" type="tns:FieldsType" minOccurs="0" maxOccurs="1" />
          <element name="methods" type="tns:MethodsType" minOccurs="0" maxOccurs="1" />
          <element name="innerclasses" type="tns:InnerClassesType" minOccurs="0" maxOccurs="1" />
+         <element name="properties" type="tns:PropertiesType" minOccurs="0" maxOccurs="1" />
       </sequence>
 
-      <attribute name="className" type="string" use="required" />
-      <attribute name="superclassName" type="string" use="required" />
-      <attribute name="packageName" type="string" use="required" />
-      <attribute name="isAnonymous" type="boolean" use="optional" />
-      <attribute name="isEnum" type="boolean" use="optional" />
-      <attribute name="isInterface" type="boolean" use="optional" />
-      <attribute name="isSynthetic" type="boolean" use="optional" />
-      <attribute name="version" type="int" use="required" />
+      <attribute name="name" type="string" use="required">
+         <annotation>
+            <documentation>The simple name of the class (without package name.)</documentation>
+         </annotation>
+      </attribute>
+      <attribute name="className" type="string" use="required">
+         <annotation>
+            <documentation>The fully qualified class name (package name + class name)</documentation>
+         </annotation>
+      </attribute>
+      <attribute name="superclassName" type="string" use="required">
+         <annotation>
+            <documentation>The fully qualified name of this class’ superclass.</documentation>
+         </annotation>
+      </attribute>
+      <attribute name="packageName" type="string" use="required">
+         <annotation>
+            <documentation>The class’ package name.</documentation>
+         </annotation>
+      </attribute>
+      <attribute name="isAnonymous" type="boolean" use="optional">
+         <annotation>
+            <documentation>Whether this is an anonymous class.</documentation>
+         </annotation>
+      </attribute>
+      <attribute name="isEnum" type="boolean" use="optional">
+         <annotation>
+            <documentation>Whether the class is an enumeration.</documentation>
+         </annotation>
+      </attribute>
+      <attribute name="isInterface" type="boolean" use="optional">
+         <annotation>
+            <documentation>Whether the class is an interface.</documentation>
+         </annotation>
+      </attribute>
+      <attribute name="isSynthetic" type="boolean" use="optional">
+         <annotation>
+            <documentation>Whether the class is synthetic.</documentation>
+         </annotation>
+      </attribute>
+      <attribute name="version" type="int" use="required">
+         <annotation>
+            <documentation>The class version the java class was compiled to.</documentation>
+         </annotation>
+      </attribute>
    </complexType>
 
    <complexType name="InnerClassesType">
+      <annotation>
+         <documentation>Type that contains zero or more innerclass items.</documentation>
+      </annotation>
       <sequence>
          <element name="innerclass" type="tns:ClassInfoType" minOccurs="0" maxOccurs="unbounded" />
+         <element name="properties" type="tns:PropertiesType" minOccurs="0" maxOccurs="1" />
       </sequence>
    </complexType>
 
    <complexType name="InterfacesType">
+      <annotation>
+         <documentation>Type that contains zero or more interface items.</documentation>
+      </annotation>
       <sequence>
          <element name="interface" type="string" minOccurs="0" maxOccurs="unbounded" />
+         <element name="properties" type="tns:PropertiesType" minOccurs="0" maxOccurs="1" />
       </sequence>
    </complexType>
 
    <!-- Complex Types describing Java Fields -->
    <complexType name="FieldsType">
+      <annotation>
+         <documentation>Type that contains zero or more field items.</documentation>
+      </annotation>
       <sequence>
          <element name="field" type="tns:FieldInfoType" minOccurs="0" maxOccurs="unbounded" />
+         <element name="properties" type="tns:PropertiesType" minOccurs="0" maxOccurs="1" />
       </sequence>
    </complexType>
 
@@ -87,6 +170,7 @@
       <sequence>
          <element name="modifiers" type="tns:ModifiersType" minOccurs="0" maxOccurs="1" />
          <element name="annotations" type="tns:AnnotationsType" minOccurs="0" maxOccurs="1" />
+         <element name="properties" type="tns:PropertiesType" minOccurs="0" maxOccurs="1" />
       </sequence>
       <attribute name="name" type="string" use="required" />
       <attribute name="type" type="string" use="required" />
@@ -95,8 +179,12 @@
 
    <!-- Complex Types describing Java Methods -->
    <complexType name="MethodsType">
+      <annotation>
+         <documentation>Type that contains zero or more method items.</documentation>
+      </annotation>
       <sequence>
          <element name="method" type="tns:MethodInfoType" minOccurs="0" maxOccurs="unbounded" />
+         <element name="properties" type="tns:PropertiesType" minOccurs="0" maxOccurs="1" />
       </sequence>
    </complexType>
 
@@ -106,6 +194,7 @@
          <element name="parameters" type="tns:ParametersType" minOccurs="0" maxOccurs="1" />
          <element name="annotations" type="tns:AnnotationsType" minOccurs="0" maxOccurs="1" />
          <element name="exceptions" type="tns:ExceptionsType" minOccurs="0" maxOccurs="1" />
+         <element name="properties" type="tns:PropertiesType" minOccurs="0" maxOccurs="1" />
       </sequence>
       <attribute name="methodName" type="string" use="required" />
       <attribute name="returnType" type="string" use="required" />
@@ -113,20 +202,31 @@
    </complexType>
 
    <complexType name="ExceptionsType">
+      <annotation>
+         <documentation>Type that contains zero or more exception items.</documentation>
+      </annotation>
       <sequence>
          <element name="exception" type="tns:ExceptionType" minOccurs="0" maxOccurs="unbounded" />
+         <element name="properties" type="tns:PropertiesType" minOccurs="0" maxOccurs="1" />
       </sequence>
    </complexType>
 
    <complexType name="ExceptionType">
+      <sequence>
+         <element name="properties" type="tns:PropertiesType" minOccurs="0" maxOccurs="1" />
+      </sequence>
       <attribute name="exceptionType" type="string" />
       <attribute name="superclassType" type="string" />
       <attribute name="isRuntimeException" type="boolean" />
    </complexType>
 
    <complexType name="ParametersType">
+      <annotation>
+         <documentation>Type that contains zero or more parameter items.</documentation>
+      </annotation>
       <sequence>
          <element name="parameter" type="tns:ParameterType" minOccurs="0" maxOccurs="unbounded" />
+         <element name="properties" type="tns:PropertiesType" minOccurs="0" maxOccurs="1" />
       </sequence>
    </complexType>
 
@@ -135,6 +235,7 @@
    <complexType name="ParameterType">
       <sequence>
          <element name="annotations" type="tns:AnnotationsType" minOccurs="0" maxOccurs="1" />
+         <element name="properties" type="tns:PropertiesType" minOccurs="0" maxOccurs="1" />
       </sequence>
       <attribute name="name" type="string" use="required" />
       <attribute name="type" type="string" use="required" />
@@ -149,33 +250,253 @@
 
    <!-- Complex Types describing Java Annotations -->
    <complexType name="AnnotationsType">
-      <sequence>
+        <annotation>
+           <documentation>Type that contains zero or more annotation items.</documentation>
+        </annotation>
+        <sequence>
          <element name="annotation" type="tns:AnnotationInfoType" minOccurs="0" maxOccurs="unbounded" />
+         <element name="properties" type="tns:PropertiesType" minOccurs="0" maxOccurs="1" />
       </sequence>
    </complexType>
 
    <complexType name="AnnotationInfoType">
+      <annotation>
+         <documentation>Information about a single annotation</documentation>
+      </annotation>
       <sequence>
-         <element name="element" type="tns:AnnotationElementType" minOccurs="0" maxOccurs="unbounded" />
+         <element name="annoKeyVal" type="tns:AnnotationValueType" minOccurs="0" maxOccurs="unbounded" />
+         <element name="properties" type="tns:PropertiesType" minOccurs="0" maxOccurs="1" />
       </sequence>
-      <attribute name="name" type="string" use="required" />
-      <attribute name="type" type="string" use="required" />
+      <attribute name="name" type="string" use="required">
+         <annotation>
+            <documentation>The simple (class) name of the annotation.</documentation>
+         </annotation>
+      </attribute>
+      <attribute name="type" type="string" use="required">
+         <annotation>
+            <documentation>The fully qualified java type of the annotation</documentation>
+         </annotation>
+      </attribute>
    </complexType>
 
-   <complexType name="AnnotationElementType">
+   <complexType name="AnnotationValueType">
+      <annotation>
+         <documentation>A type that describes a single value of an annotation</documentation>
+      </annotation>
       <sequence>
-         <element name="value" type="tns:AnnotationElementValueType" minOccurs="0" maxOccurs="unbounded" />
+         <annotation>
+            <documentation>The value associated with this annotation value.</documentation>
+         </annotation>
+         <element name="name" type="string" minOccurs="1" maxOccurs="1" />
+         <choice>            
+            <element name="annotation" type="tns:AnnotationInfoType" minOccurs="1" maxOccurs="1" />
+            <element name="annotations" type="tns:AnnotationsType" minOccurs="1" maxOccurs="1" />
+            <element name="value" type="tns:ValueInstanceType" minOccurs="1" maxOccurs="1" />
+            <element name="values" type="tns:ArrayInstanceType" minOccurs="1" maxOccurs="1" />
+         </choice>        
+         <element name="properties" type="tns:PropertiesType" minOccurs="0" maxOccurs="1" />
       </sequence>
-      <attribute name="name" type="string" use="required" />
-      <attribute name="type" type="string" use="optional" />
-      <attribute name="isArray" type="boolean" use="optional" />
+   </complexType>
+   
+   <!-- 
+        Type declarations required for holding instances of Static Objects, such as those provided
+        to Annotation key-value elements. 
+    -->
+        
+   <complexType name="ValueInstanceType">
+        <sequence>
+            <annotation>
+               <documentation>
+The ValueInstance may be of one of the following types:
+
+Collection Types (Array, List, or Map)
+
+A Single Value Type (An Enumeration (type Enum), An Object Instance (type Object), or a SimpleValue (every other type.))
+
+If the ValueInstance is null, then do not define any of the sub-elements in this choice.
+
+</documentation>
+            </annotation>
+            <choice minOccurs="0" maxOccurs="1">
+                <!-- Multiple Value Elements -->
+                <element name="array" type="tns:ArrayInstanceType" minOccurs="1" maxOccurs="1">
+                   <annotation>
+                      <documentation>If the ValueInstanceType has an attribute “type” value of “Array”, then the sub-element must be an “array”.</documentation>
+                   </annotation></element>
+                <element name="list" type="tns:ListInstanceType" minOccurs="1" maxOccurs="1">
+                   <annotation>
+                      <documentation>If the ValueInstanceType has an attribute “type” value of “List”, then the sub-element must be a “list”.</documentation>
+                   </annotation></element>
+                <element name="map" type="tns:MapInstanceType" minOccurs="1" maxOccurs="1">
+                   <annotation>
+                      <documentation>If the ValueInstanceType has an attribute “type” value of “Map”, then the sub-element must be a “map”.</documentation>
+                   </annotation></element>
+                   
+                <!-- Single Value Elements -->
+                <element name="enum" type="tns:EnumerationInstanceType" minOccurs="1" maxOccurs="1">
+                   <annotation>
+                      <documentation>If the ValueInstanceType has an attribute “type” value of “Enum”, then the sub-element must be an “enum”.</documentation>
+                   </annotation></element>
+                <element name="object" type="tns:ObjectInstanceType" minOccurs="1" maxOccurs="1">
+                   <annotation>
+                      <documentation>If the ValueInstanceType has an attribute “type” value of “Object”, then the sub-element must be an “object”.</documentation>
+                   </annotation></element>
+                <element name="simple" type="string" minOccurs="1" maxOccurs="1">
+                   <annotation>
+                      <documentation>If the ValueInstanceType has an attribute “type” value of anything other than “Enum” or “Object”, then the sub-element must be a “simple”.</documentation>
+                   </annotation></element>
+            </choice>
+            <element name="properties" type="tns:PropertiesType" minOccurs="0" maxOccurs="1" />
+        </sequence>        
+        <attribute name="type" type="tns:ValueType" use="required"/>
    </complexType>
 
-   <complexType name="AnnotationElementValueType">
-      <choice>
-         <element name="simpleValue" type="string" />
-         <element name="annotation" type="tns:AnnotationInfoType" />
-      </choice>
+   <simpleType name="ValueType">
+      <restriction base="string">
+         <enumeration value="UNKNOWN"></enumeration>
+         <enumeration value="NULL"></enumeration>
+         
+         <enumeration value="Array"></enumeration>
+         <enumeration value="List"></enumeration>
+         <enumeration value="Map"></enumeration>
+         
+         <enumeration value="Enum"></enumeration>
+         <enumeration value="Object"></enumeration>
+         <enumeration value="java.lang.String"></enumeration>
+
+         <enumeration value="boolean"></enumeration>
+         <enumeration value="byte"></enumeration>
+         <enumeration value="char"></enumeration>
+         <enumeration value="float"></enumeration>
+         <enumeration value="double"></enumeration>
+         <enumeration value="int"></enumeration>
+         <enumeration value="long"></enumeration>
+         <enumeration value="short"></enumeration>
+
+         <enumeration value="java.lang.Boolean"></enumeration>
+         <enumeration value="java.lang.Byte"></enumeration>
+         <enumeration value="java.lang.Character"></enumeration>
+         <enumeration value="java.lang.Float"></enumeration>
+         <enumeration value="java.lang.Double"></enumeration>
+         <enumeration value="java.lang.Int"></enumeration>
+         <enumeration value="java.lang.Long"></enumeration>
+         <enumeration value="java.lang.Short"></enumeration>
+      </restriction>
+   </simpleType>
+           
+   <complexType name="ArrayInstanceType">
+        <sequence>
+            <element name="entry" type="tns:ArrayEntryType" minOccurs="0" maxOccurs="unbounded"/>
+            <element name="properties" type="tns:PropertiesType" minOccurs="0" maxOccurs="1" />
+        </sequence> 
+        <attribute name="type" type="tns:ValueType" use="required"/>
+        <attribute name="objectType" type="string" use="optional"/>
+        <attribute name="length" type="int" use="required"/>
+   </complexType>
+   
+   <complexType name="ArrayEntryType">
+        <sequence>
+            <element name="value" type="tns:ValueInstanceType" minOccurs="0" maxOccurs="1"/>
+            <element name="properties" type="tns:PropertiesType" minOccurs="0" maxOccurs="1" />
+        </sequence> 
+        <attribute name="index" type="int" use="required"/>
+   </complexType>
+   
+   <complexType name="ListInstanceType">
+        <sequence>
+            <element name="entry" type="tns:ListEntryType" minOccurs="0" maxOccurs="unbounded"/>
+            <element name="properties" type="tns:PropertiesType" minOccurs="0" maxOccurs="1" />
+        </sequence>      
+        <attribute name="type" type="tns:ValueType" use="required"/>
+        <attribute name="objectType" type="string" use="optional"/>
+   </complexType>
+   
+   <complexType name="ListEntryType">
+        <sequence>
+            <element name="value" type="tns:ValueInstanceType" minOccurs="1" maxOccurs="1"/>
+            <element name="properties" type="tns:PropertiesType" minOccurs="0" maxOccurs="1" />
+        </sequence> 
+        <attribute name="index" type="int" use="optional"/>
+   </complexType>
+   
+   <complexType name="MapInstanceType">
+        <sequence>
+            <element name="entry" type="tns:MapEntryType" minOccurs="0" maxOccurs="unbounded"/>
+            <element name="properties" type="tns:PropertiesType" minOccurs="0" maxOccurs="1" />
+        </sequence>      
+        <attribute name="type" type="tns:ValueType" use="required"/>
+        <attribute name="objectType" type="string" use="optional"/>
+        <attribute name="size" type="int" use="required"/>
+   </complexType>
+   
+   <complexType name="MapEntryType">
+        <sequence>
+            <element name="key" type="tns:ValueInstanceType" minOccurs="1" maxOccurs="1"/>
+            <element name="value" type="tns:ValueInstanceType" minOccurs="1" maxOccurs="1"/>
+            <element name="properties" type="tns:PropertiesType" minOccurs="0" maxOccurs="1" />
+        </sequence> 
+        <attribute name="index" type="int" use="optional"/>
+   </complexType>
+   
+   <complexType name="EnumerationInstanceType">
+        <annotation>
+           <documentation>Describes an instance of a Java Enumeration.  Consists of the enum’s class type and the chosen enum value.</documentation>
+        </annotation>
+        <sequence>
+            <element name="properties" type="tns:PropertiesType" minOccurs="0" maxOccurs="1" />
+        </sequence>
+        <attribute name="className" type="string" use="required"/>
+        <attribute name="value" type="string" use="optional">
+           <annotation>
+              <documentation>The chosen enumeration value.  If null, then do not declare a value attribute.</documentation>
+           </annotation></attribute>
+   </complexType>
+   
+   <complexType name="ObjectInstanceType">
+        <sequence>
+            <element name="field" type="tns:ObjectFieldInstanceType" minOccurs="0" maxOccurs="unbounded"/>
+            <element name="properties" type="tns:PropertiesType" minOccurs="0" maxOccurs="1" />
+        </sequence>
+        <attribute name="className" use="required"/>
+   </complexType>
+   
+    <complexType name="ObjectFieldInstanceType">
+        <sequence>
+            <element name="value" type="tns:ValueInstanceType" minOccurs="1" maxOccurs="1"/>
+            <element name="properties" type="tns:PropertiesType" minOccurs="0" maxOccurs="1" />
+        </sequence>
+        <attribute name="className" use="required"/>
+        <attribute name="name" use="required"/>
+   </complexType>
+   
+   <!-- 
+        The properties schema construct enables a common-use means to define a body of properties (key-value pairs). 
+    -->
+    
+   <complexType name="PropertiesType">
+        <sequence>
+            <element name="property" type="tns:PropertyType" minOccurs="0" maxOccurs="unbounded" />
+        </sequence>
+   </complexType>
+   
+   <complexType name="PropertyType">
+        <attribute name="name" type="string" use="required"/>
+        <attribute name="value" type="string" use="required"/>
+        <attribute name="type" use="optional">
+            <simpleType>
+                <restriction base="string">
+                    <enumeration value="boolean"></enumeration>
+                    <enumeration value="byte"></enumeration>
+                    <enumeration value="char"></enumeration>
+                    <enumeration value="float"></enumeration>
+                    <enumeration value="double"></enumeration>
+                    <enumeration value="int"></enumeration>
+                    <enumeration value="long"></enumeration>
+                    <enumeration value="short"></enumeration>
+                    <enumeration value="String"></enumeration>
+                </restriction>
+            </simpleType>          
+        </attribute>
    </complexType>
 
 </schema>

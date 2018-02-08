@@ -17,22 +17,21 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * Information about a single annotation
- * 
- * <p>Java class for AnnotationInfoType complex type.
+ * <p>Java class for MapInstanceType complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="AnnotationInfoType">
+ * &lt;complexType name="MapInstanceType">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="annoKeyVal" type="{ClassInfo_1.0}AnnotationValueType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="entry" type="{ClassInfo_1.0}MapEntryType" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="properties" type="{ClassInfo_1.0}PropertiesType" minOccurs="0"/>
  *       &lt;/sequence>
- *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="type" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="type" use="required" type="{ClassInfo_1.0}ValueType" />
+ *       &lt;attribute name="objectType" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="size" use="required" type="{http://www.w3.org/2001/XMLSchema}int" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -41,46 +40,48 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "AnnotationInfoType", propOrder = {
-    "annoKeyVal",
+@XmlType(name = "MapInstanceType", propOrder = {
+    "entry",
     "properties"
 })
-public class AnnotationInfoType {
+public class MapInstanceType {
 
-    protected List<AnnotationValueType> annoKeyVal;
+    protected List<MapEntryType> entry;
     protected PropertiesType properties;
-    @XmlAttribute(name = "name", required = true)
-    protected String name;
     @XmlAttribute(name = "type", required = true)
-    protected String type;
+    protected ValueType type;
+    @XmlAttribute(name = "objectType")
+    protected String objectType;
+    @XmlAttribute(name = "size", required = true)
+    protected int size;
 
     /**
-     * Gets the value of the annoKeyVal property.
+     * Gets the value of the entry property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the annoKeyVal property.
+     * This is why there is not a <CODE>set</CODE> method for the entry property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getAnnoKeyVal().add(newItem);
+     *    getEntry().add(newItem);
      * </pre>
      * 
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link AnnotationValueType }
+     * {@link MapEntryType }
      * 
      * 
      */
-    public List<AnnotationValueType> getAnnoKeyVal() {
-        if (annoKeyVal == null) {
-            annoKeyVal = new ArrayList<AnnotationValueType>();
+    public List<MapEntryType> getEntry() {
+        if (entry == null) {
+            entry = new ArrayList<MapEntryType>();
         }
-        return this.annoKeyVal;
+        return this.entry;
     }
 
     /**
@@ -108,38 +109,14 @@ public class AnnotationInfoType {
     }
 
     /**
-     * Gets the value of the name property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Sets the value of the name property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setName(String value) {
-        this.name = value;
-    }
-
-    /**
      * Gets the value of the type property.
      * 
      * @return
      *     possible object is
-     *     {@link String }
+     *     {@link ValueType }
      *     
      */
-    public String getType() {
+    public ValueType getType() {
         return type;
     }
 
@@ -148,11 +125,51 @@ public class AnnotationInfoType {
      * 
      * @param value
      *     allowed object is
+     *     {@link ValueType }
+     *     
+     */
+    public void setType(ValueType value) {
+        this.type = value;
+    }
+
+    /**
+     * Gets the value of the objectType property.
+     * 
+     * @return
+     *     possible object is
      *     {@link String }
      *     
      */
-    public void setType(String value) {
-        this.type = value;
+    public String getObjectType() {
+        return objectType;
+    }
+
+    /**
+     * Sets the value of the objectType property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setObjectType(String value) {
+        this.objectType = value;
+    }
+
+    /**
+     * Gets the value of the size property.
+     * 
+     */
+    public int getSize() {
+        return size;
+    }
+
+    /**
+     * Sets the value of the size property.
+     * 
+     */
+    public void setSize(int value) {
+        this.size = value;
     }
 
 }

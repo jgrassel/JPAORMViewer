@@ -8,28 +8,27 @@
 
 package com.ibm.ws.jpa.diagnostics.orm.ano.jaxb.classinfo10;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * Type that contains zero or more annotation items.
- * 
- * <p>Java class for AnnotationsType complex type.
+ * <p>Java class for ListEntryType complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="AnnotationsType">
+ * &lt;complexType name="ListEntryType">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="annotation" type="{ClassInfo_1.0}AnnotationInfoType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="value" type="{ClassInfo_1.0}ValueInstanceType"/>
  *         &lt;element name="properties" type="{ClassInfo_1.0}PropertiesType" minOccurs="0"/>
  *       &lt;/sequence>
+ *       &lt;attribute name="index" type="{http://www.w3.org/2001/XMLSchema}int" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -38,42 +37,40 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "AnnotationsType", propOrder = {
-    "annotation",
+@XmlType(name = "ListEntryType", propOrder = {
+    "value",
     "properties"
 })
-public class AnnotationsType {
+public class ListEntryType {
 
-    protected List<AnnotationInfoType> annotation;
+    @XmlElement(required = true)
+    protected ValueInstanceType value;
     protected PropertiesType properties;
+    @XmlAttribute(name = "index")
+    protected Integer index;
 
     /**
-     * Gets the value of the annotation property.
+     * Gets the value of the value property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the annotation property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getAnnotation().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link AnnotationInfoType }
-     * 
-     * 
+     * @return
+     *     possible object is
+     *     {@link ValueInstanceType }
+     *     
      */
-    public List<AnnotationInfoType> getAnnotation() {
-        if (annotation == null) {
-            annotation = new ArrayList<AnnotationInfoType>();
-        }
-        return this.annotation;
+    public ValueInstanceType getValue() {
+        return value;
+    }
+
+    /**
+     * Sets the value of the value property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link ValueInstanceType }
+     *     
+     */
+    public void setValue(ValueInstanceType value) {
+        this.value = value;
     }
 
     /**
@@ -98,6 +95,30 @@ public class AnnotationsType {
      */
     public void setProperties(PropertiesType value) {
         this.properties = value;
+    }
+
+    /**
+     * Gets the value of the index property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
+     */
+    public Integer getIndex() {
+        return index;
+    }
+
+    /**
+     * Sets the value of the index property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *     
+     */
+    public void setIndex(Integer value) {
+        this.index = value;
     }
 
 }

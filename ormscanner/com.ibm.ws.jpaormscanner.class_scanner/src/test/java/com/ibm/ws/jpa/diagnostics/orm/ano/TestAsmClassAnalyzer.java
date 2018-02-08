@@ -251,7 +251,8 @@ public class TestAsmClassAnalyzer {
                 assertNotNull(fieldAnnos);
                 final List<AnnotationInfoType> fieldAnnoList = fieldAnnos.getAnnotation();       
                 assertNotNull(fieldAnnoList);
-                assertEquals(1, fieldAnnoList.size());
+                assertEquals(2, fieldAnnoList.size());
+                
                 AnnotationInfoType fieldAit = fieldAnnoList.get(0);
                 assertNotNull(fieldAit);
                 assertEquals("Basic", fieldAit.getName());
@@ -268,10 +269,16 @@ public class TestAsmClassAnalyzer {
                 final List<AnnotationInfoType> fieldAnnoList = fieldAnnos.getAnnotation();       
                 assertNotNull(fieldAnnoList);
                 assertEquals(1, fieldAnnoList.size());
+                
                 AnnotationInfoType fieldAit = fieldAnnoList.get(0);
                 assertNotNull(fieldAit);
                 assertEquals("Basic", fieldAit.getName());
                 assertEquals("javax.persistence.Basic", fieldAit.getType());
+                
+                // Verify optional=true
+//                final List<AnnotationElementType> faEleList = fieldAit.getElement();
+//                assertNotNull(faEleList);
+//                assertEquals(1, faEleList.size());
                 
                 fieldsPassed.put("persistentInteger", Boolean.TRUE);
             } else if ("persistentIntegerWrapper".equals(fit.getName())) {

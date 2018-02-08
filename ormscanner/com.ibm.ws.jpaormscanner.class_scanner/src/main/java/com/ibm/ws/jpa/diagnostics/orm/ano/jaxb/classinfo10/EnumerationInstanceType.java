@@ -15,20 +15,21 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for ExceptionType complex type.
+ * Describes an instance of a Java Enumeration.  Consists of the enum’s class type and the chosen enum value.
+ * 
+ * <p>Java class for EnumerationInstanceType complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="ExceptionType">
+ * &lt;complexType name="EnumerationInstanceType">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="properties" type="{ClassInfo_1.0}PropertiesType" minOccurs="0"/>
  *       &lt;/sequence>
- *       &lt;attribute name="exceptionType" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="superclassType" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="isRuntimeException" type="{http://www.w3.org/2001/XMLSchema}boolean" />
+ *       &lt;attribute name="className" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="value" type="{http://www.w3.org/2001/XMLSchema}string" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -37,18 +38,16 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "ExceptionType", propOrder = {
+@XmlType(name = "EnumerationInstanceType", propOrder = {
     "properties"
 })
-public class ExceptionType {
+public class EnumerationInstanceType {
 
     protected PropertiesType properties;
-    @XmlAttribute(name = "exceptionType")
-    protected String exceptionType;
-    @XmlAttribute(name = "superclassType")
-    protected String superclassType;
-    @XmlAttribute(name = "isRuntimeException")
-    protected Boolean isRuntimeException;
+    @XmlAttribute(name = "className", required = true)
+    protected String className;
+    @XmlAttribute(name = "value")
+    protected String value;
 
     /**
      * Gets the value of the properties property.
@@ -75,75 +74,51 @@ public class ExceptionType {
     }
 
     /**
-     * Gets the value of the exceptionType property.
+     * Gets the value of the className property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getExceptionType() {
-        return exceptionType;
+    public String getClassName() {
+        return className;
     }
 
     /**
-     * Sets the value of the exceptionType property.
+     * Sets the value of the className property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setExceptionType(String value) {
-        this.exceptionType = value;
+    public void setClassName(String value) {
+        this.className = value;
     }
 
     /**
-     * Gets the value of the superclassType property.
+     * Gets the value of the value property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getSuperclassType() {
-        return superclassType;
+    public String getValue() {
+        return value;
     }
 
     /**
-     * Sets the value of the superclassType property.
+     * Sets the value of the value property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setSuperclassType(String value) {
-        this.superclassType = value;
-    }
-
-    /**
-     * Gets the value of the isRuntimeException property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
-     */
-    public Boolean isIsRuntimeException() {
-        return isRuntimeException;
-    }
-
-    /**
-     * Sets the value of the isRuntimeException property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
-     */
-    public void setIsRuntimeException(Boolean value) {
-        this.isRuntimeException = value;
+    public void setValue(String value) {
+        this.value = value;
     }
 
 }
