@@ -341,6 +341,7 @@ If the ValueInstance is null, then do not define any of the sub-elements in this
                    <annotation>
                       <documentation>If the ValueInstanceType has an attribute “type” value of “Object”, then the sub-element must be an “object”.</documentation>
                    </annotation></element>
+                <element name="objectref" type="tns:ObjectReferenceType" minOccurs="1" maxOccurs="1"></element>
                 <element name="simple" type="string" minOccurs="1" maxOccurs="1">
                    <annotation>
                       <documentation>If the ValueInstanceType has an attribute “type” value of anything other than “Enum” or “Object”, then the sub-element must be a “simple”.</documentation>
@@ -378,7 +379,7 @@ If the ValueInstance is null, then do not define any of the sub-elements in this
          <enumeration value="java.lang.Character"></enumeration>
          <enumeration value="java.lang.Float"></enumeration>
          <enumeration value="java.lang.Double"></enumeration>
-         <enumeration value="java.lang.Int"></enumeration>
+         <enumeration value="java.lang.Integer"></enumeration>
          <enumeration value="java.lang.Long"></enumeration>
          <enumeration value="java.lang.Short"></enumeration>
       </restriction>
@@ -458,6 +459,7 @@ If the ValueInstance is null, then do not define any of the sub-elements in this
             <element name="properties" type="tns:PropertiesType" minOccurs="0" maxOccurs="1" />
         </sequence>
         <attribute name="className" use="required"/>
+        <attribute name="id" type="int" use="required"/>
    </complexType>
    
     <complexType name="ObjectFieldInstanceType">
@@ -467,6 +469,13 @@ If the ValueInstance is null, then do not define any of the sub-elements in this
         </sequence>
         <attribute name="className" use="required"/>
         <attribute name="name" use="required"/>
+   </complexType>
+   
+   <complexType name="ObjectReferenceType">
+        <sequence>
+            <element name="properties" type="tns:PropertiesType" minOccurs="0" maxOccurs="1" />
+        </sequence>
+        <attribute name="refId" type="int" use="required"/>
    </complexType>
    
    <!-- 

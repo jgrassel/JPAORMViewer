@@ -147,8 +147,6 @@ public class AsmClassAnalyzer {
 
         @Override
         public FieldVisitor visitField(int access, String name, String desc, String signature, Object value) {
-            // FieldVisitor fv = super.visitField(access, name, desc, signature, value);
-
             FieldsType ft = cit.getFields();
             if (ft == null) {
                 ft = new FieldsType();
@@ -176,7 +174,7 @@ public class AsmClassAnalyzer {
 
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
-            MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
+ //           MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
 
             MethodsType mt = cit.getMethods();
             if (mt == null) {
@@ -256,7 +254,7 @@ public class AsmClassAnalyzer {
                 }
             }
 
-            return mv;
+            return new CAMethodVisitor(mit);
         }
 
         @Override
@@ -349,6 +347,42 @@ public class AsmClassAnalyzer {
             super.visitEnd();
         }
 
+    }
+    
+    private class CAMethodVisitor extends MethodVisitor {
+        private MethodInfoType mit;
+        
+        public CAMethodVisitor(MethodInfoType mit) {
+            super(Opcodes.ASM6);
+            this.mit = mit;
+        }
+
+        @Override
+        public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
+            AnnotationsType annosType = mit.getAnnotations();
+            if (annosType == null) {
+                annosType = new AnnotationsType();
+                mit.setAnnotations(annosType);
+            }
+
+            final List<AnnotationInfoType> annoList = annosType.getAnnotation();
+            final AnnotationInfoType ait = new AnnotationInfoType();
+            annoList.add(ait);
+
+            final Type type = Type.getType(desc);
+            if (type != null) {
+                String processedName = AsmHelper.normalizeClassName(type.getClassName());
+                ait.setName(AsmHelper.extractSimpleClassName(processedName));
+                ait.setType(processedName);
+            }
+
+            return new CAAnnotationVisitor(ait, desc, visible);
+        }
+
+        @Override
+        public void visitEnd() {
+            super.visitEnd();
+        }
     }
 
     private class CAAnnotationVisitor extends AnnotationVisitor {

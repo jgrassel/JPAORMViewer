@@ -8,28 +8,25 @@
 
 package com.ibm.ws.jpa.diagnostics.orm.ano.jaxb.classinfo10;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * Type that contains zero or more field items.
- * 
- * <p>Java class for FieldsType complex type.
+ * <p>Java class for ObjectReferenceType complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="FieldsType">
+ * &lt;complexType name="ObjectReferenceType">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="field" type="{ClassInfo_1.0}FieldInfoType" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="properties" type="{ClassInfo_1.0}PropertiesType" minOccurs="0"/>
  *       &lt;/sequence>
+ *       &lt;attribute name="refId" use="required" type="{http://www.w3.org/2001/XMLSchema}int" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -38,43 +35,14 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "FieldsType", propOrder = {
-    "field",
+@XmlType(name = "ObjectReferenceType", propOrder = {
     "properties"
 })
-public class FieldsType {
+public class ObjectReferenceType {
 
-    protected List<FieldInfoType> field;
     protected PropertiesType properties;
-
-    /**
-     * Gets the value of the field property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the field property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getField().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link FieldInfoType }
-     * 
-     * 
-     */
-    public List<FieldInfoType> getField() {
-        if (field == null) {
-            field = new ArrayList<FieldInfoType>();
-        }
-        return this.field;
-    }
+    @XmlAttribute(name = "refId", required = true)
+    protected long refId;
 
     /**
      * Gets the value of the properties property.
@@ -98,6 +66,22 @@ public class FieldsType {
      */
     public void setProperties(PropertiesType value) {
         this.properties = value;
+    }
+
+    /**
+     * Gets the value of the refId property.
+     * 
+     */
+    public long getRefId() {
+        return refId;
+    }
+
+    /**
+     * Sets the value of the refId property.
+     * 
+     */
+    public void setRefId(long value) {
+        this.refId = value;
     }
 
 }

@@ -51,6 +51,7 @@ public class SimpleJPAEntity {
         return id;
     }
 
+    @TestAnnotationWithArraysOfPrimitives(intArray = { 1, 2, 3 } )
     public void setId(int id) {
         this.id = id;
     }
@@ -59,6 +60,7 @@ public class SimpleJPAEntity {
         return version;
     }
 
+    @TestAnnotationWithArraysOfPrimitives(booleanArray = { true, false, false, true } )
     public void setVersion(int version) {
         this.version = version;
     }
@@ -67,6 +69,8 @@ public class SimpleJPAEntity {
         return persistentString;
     }
 
+    @TestAnnotationWithArraysOfPrimitives(charArray = { 'a', 'b', 'c', 'x', 'y', 'z' },
+            floatArray = { 3.14f, 123.45678901f, 42.000001f})
     public void setPersistentString(String persistentString) {
         this.persistentString = persistentString;
     }

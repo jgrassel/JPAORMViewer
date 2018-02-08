@@ -11,14 +11,38 @@
 
 package com.ibm.ws.jpa.diagnostics.orm.ano;
 
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
+
 import org.objectweb.asm.Type;
 
+import com.ibm.ws.jpa.diagnostics.orm.ano.jaxb.classinfo10.ArrayEntryType;
+import com.ibm.ws.jpa.diagnostics.orm.ano.jaxb.classinfo10.ArrayInstanceType;
 import com.ibm.ws.jpa.diagnostics.orm.ano.jaxb.classinfo10.EnumerationInstanceType;
+import com.ibm.ws.jpa.diagnostics.orm.ano.jaxb.classinfo10.ObjectFieldInstanceType;
+import com.ibm.ws.jpa.diagnostics.orm.ano.jaxb.classinfo10.ObjectInstanceType;
+import com.ibm.ws.jpa.diagnostics.orm.ano.jaxb.classinfo10.ObjectReferenceType;
 import com.ibm.ws.jpa.diagnostics.orm.ano.jaxb.classinfo10.ValueInstanceType;
 import com.ibm.ws.jpa.diagnostics.orm.ano.jaxb.classinfo10.ValueType;
 
 public class AsmObjectValueAnalyzer {
+    private static final AtomicLong objIDCounter = new AtomicLong(0);
+    
     public static ValueInstanceType processValue(Object value) {
+        return processValueInternal(value, new HashMap<Object, Long>());
+    }
+    
+    public static ValueInstanceType processEnum(String name, String desc, String value) {  
+        return processEnumInternal(name, desc, value, new HashMap<Object, Long>());
+    }
+    
+    private static ValueInstanceType processValueInternal(Object value, Map<Object, Long> objMap) {
         ValueInstanceType vit = new ValueInstanceType();
         
         if (value == null) {
@@ -27,6 +51,30 @@ public class AsmObjectValueAnalyzer {
         }
         
         final Class<?> cls = value.getClass();
+        
+        if (cls.isArray()) {
+            vit.setType(ValueType.ARRAY);
+            
+            final ArrayInstanceType ait = new ArrayInstanceType();
+            vit.setArray(ait);
+            
+            final int length = Array.getLength(value);
+            ait.setLength(length);
+            
+            if (length > 0) {
+                for (int index = 0; index < length; index++) {
+                    ArrayEntryType aet = new ArrayEntryType();
+                    aet.setIndex(index);
+                    ait.getEntry().add(aet);
+                    
+                    Object oVal = Array.get(value, index);
+                    ValueInstanceType arrayVit = processValueInternal(oVal, objMap);
+                    aet.setValue(arrayVit);
+                }
+            }
+            
+            return vit;
+        }
         
         if (cls.isPrimitive()) {
             if (cls.equals(boolean.class)) {
@@ -74,7 +122,7 @@ public class AsmObjectValueAnalyzer {
                 vit.setType(ValueType.JAVA_LANG_FLOAT);
                 vit.setSimple(String.format("%f", value));
             } else if (cls.equals(java.lang.Integer.class)) {
-                vit.setType(ValueType.JAVA_LANG_INT);  // TODO: We want this JAVA_LANG_INTEGER
+                vit.setType(ValueType.JAVA_LANG_INTEGER);
                 vit.setSimple(String.format("%d", value));
             } else if (cls.equals(java.lang.Long.class)) {
                 vit.setType(ValueType.JAVA_LANG_LONG);
@@ -100,13 +148,69 @@ public class AsmObjectValueAnalyzer {
             vit.setType(ValueType.JAVA_LANG_STRING);
             vit.setSimple(String.format("%s", value));
         } else {
-            vit.setType(ValueType.UNKNOWN);
+            // Generic Object.
+            vit.setType(ValueType.OBJECT);
+            
+            if (objMap != null && objMap.containsKey(value)) {
+                // We have seen this Object before in a previous level of recursion.  Reference this
+                // Object with a ObjectReferenceType  
+                final ObjectReferenceType ort = new ObjectReferenceType();
+                ort.setRefId(objMap.get(value));
+                vit.setObjectref(ort);                
+            } else {
+                // We have not seen this Object before in a previous level of recursion.
+                final Long id = objIDCounter.incrementAndGet();  
+                objMap.put(value, id);
+                
+                final ObjectInstanceType oit = new ObjectInstanceType();
+                processObjectInternal(oit, value, objMap);  
+                vit.setObject(oit);
+            }            
         }
         
         return vit;
     }
     
-    public static ValueInstanceType processEnum(String name, String desc, String value) {       
+    private static void processObjectInternal(ObjectInstanceType oit, Object value, Map<Object, Long> objMap) {        
+        final Class<?> c = value.getClass();        
+        oit.setClassName(c.getName());
+        
+        final List<ObjectFieldInstanceType> ofitList = oit.getField();
+        
+        // Get all of the fields that are retained by this Object.
+        final Set<Field> fieldsSet = new HashSet<Field>();        
+        Class<?> classWalker = c;        
+        while (c != null && !Object.class.equals(c)) {
+            // TODO: Need to be able to work within a Java 2 Security Enable environment, so doPriv() stuff.
+            Field[] declaredFields = classWalker.getDeclaredFields();
+            if (declaredFields != null && declaredFields.length > 0) {
+                for (Field f : declaredFields) {
+                    fieldsSet.add(f);
+                }
+            }          
+        }
+        
+        // Walk through each field found
+        for (Field f : fieldsSet) {           
+            final ObjectFieldInstanceType ofit = new ObjectFieldInstanceType();
+            ofitList.add(ofit);
+            
+            Class<?> fClass = f.getType();          
+            ofit.setClassName(fClass.getName());
+            ofit.setName(f.getName());
+            
+            try {
+                Object fValue = f.get(value);   
+                ValueInstanceType vit = processValueInternal(fValue, objMap);
+                ofit.setValue(vit);
+            } catch (Exception e) {
+                e.printStackTrace(); // TODO: Clean up
+                continue;
+            }
+        }       
+    }
+    
+    private static ValueInstanceType processEnumInternal(String name, String desc, String value, Map<Object, Long> objMap) {       
         final ValueInstanceType vit = new ValueInstanceType();
         vit.setType(ValueType.ENUM);
         
