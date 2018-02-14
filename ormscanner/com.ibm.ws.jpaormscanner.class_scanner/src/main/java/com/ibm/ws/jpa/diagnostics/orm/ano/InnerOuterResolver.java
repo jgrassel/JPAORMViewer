@@ -25,7 +25,7 @@ public class InnerOuterResolver {
     }
     
     public void resolve(List<ClassInfoType> classList) {
-        System.out.println("Size of innerClassesToResolveSet = " + innerClassesToResolveSet.size());
+//        System.out.println("Size of innerClassesToResolveSet = " + innerClassesToResolveSet.size());
         for (UnresolvedInnerClassReference uicr : innerClassesToResolveSet) {
             final ClassInfoType outerClass = uicr.getOuterClass();
             final String innerClassName = uicr.getUnresolvedInnerClass();
@@ -55,14 +55,14 @@ public class InnerOuterResolver {
                 }
             }
             
-            System.out.println(uicr);
+//            System.out.println(uicr);
             
         }
-        System.out.println();
-        System.out.println("Size of outerClassesToResolveSet = " + outerClassesToResolveSet.size());
-        for (UnresolvedOuterClassReference uocr : outerClassesToResolveSet) {
-            System.out.println(uocr);
-        }
+//        System.out.println();
+//        System.out.println("Size of outerClassesToResolveSet = " + outerClassesToResolveSet.size());
+//        for (UnresolvedOuterClassReference uocr : outerClassesToResolveSet) {
+//            System.out.println(uocr);
+//        }
     }
     
     private class UnresolvedInnerClassReference {

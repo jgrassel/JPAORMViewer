@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="PersistentArchiveScanResult_1.0" xmlns:tns="PersistentArchiveScanResult_1.0"
+   elementFormDefault="qualified">
+
+   <element name="PersistentArchiveScanResult" type="tns:PersistentArchiveScanResultType" />
+
+   <complexType name="PersistentArchiveScanResultType">
+      <sequence>
+         <!-- Scan Environment -->
+         <element name="persistenceUnitRootURL" type="anyURI" minOccurs="1" maxOccurs="1" />
+         <element name="persistenceUnitRootPath" type="string" minOccurs="1" maxOccurs="1" />
+         <element name="relativePathLibraryJarPathMap" type="tns:RelativePathLibraryJarPathMapType" minOccurs="1"
+            maxOccurs="1" />
+         <element name="persistence" type="tns:PersistenceParseResultType" minOccurs="1" maxOccurs="1" />
+      </sequence>
+
+   </complexType>
+
+   <complexType name="RelativePathLibraryJarPathMapType">
+      <sequence>
+         <element name="jar-file" type="tns:RelativePathLibraryJarPathMapEntryType" minOccurs="0"
+            maxOccurs="unbounded" />
+      </sequence>
+   </complexType>
+
+   <complexType name="RelativePathLibraryJarPathMapEntryType">
+      <sequence>
+         <element name="relativePath" type="string" minOccurs="1" maxOccurs="1" />
+         <element name="URL" type="anyURI" minOccurs="1" maxOccurs="1" />
+      </sequence>
+   </complexType>
+   
+   <complexType name="PersistenceParseResultType">
+      <sequence>
+         <element name="version" minOccurs="1" maxOccurs="1">
+            <simpleType>
+               <restriction base="token">
+                  <pattern value="[0-9]+(\.[0-9]+)*" />
+               </restriction>
+            </simpleType>
+         </element>
+         <element name="originalHash" type="string" minOccurs="1" maxOccurs="1">
+            <annotation>
+               <documentation>The hash of the original persistence.xml file as in the scanned archive.</documentation>
+            </annotation>
+         </element>
+         <element name="scannedHash" type="string" minOccurs="1" maxOccurs="1">
+            <annotation>
+               <documentation>The hash of the persistence.xml reconstituted from the scanner's model.</documentation>
+            </annotation>
+         </element>
+         <element name="persistenceUnitDocument" type="string" minOccurs="0" maxOccurs="unbounded">
+            <annotation>
+               <documentation>The asset in the analyzer report bundle containing the persistence unit definition as
+                  reconstituted from the scanner's model.</documentation>
+            </annotation>
+         </element>
+      </sequence>
+   </complexType>
+
+</schema>

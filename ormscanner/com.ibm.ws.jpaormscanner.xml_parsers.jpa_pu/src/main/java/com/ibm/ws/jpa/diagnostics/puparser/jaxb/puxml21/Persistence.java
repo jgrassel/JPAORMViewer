@@ -252,6 +252,7 @@ public class Persistence implements PUP_Persistence {
      * 
      */
     @XmlAccessorType(XmlAccessType.FIELD)
+    @XmlRootElement
     @XmlType(name = "", propOrder = {
         "description",
         "provider",

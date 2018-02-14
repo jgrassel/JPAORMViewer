@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="WAR_Report_1.0" xmlns:tns="WAR_Report_1.0"
+   elementFormDefault="qualified">
+
+   <element name="WARReport" type="tns:WARReportType" />
+
+   <complexType name="WARReportType">
+      <sequence>
+         <element name="filename" type="string" minOccurs="1" maxOccurs="1" />
+         <element name="filepath" type="string" minOccurs="0" maxOccurs="1" />
+      </sequence>
+      <attribute name="version" type="int" use="required"></attribute>
+   </complexType>
+</schema>

@@ -14,7 +14,12 @@ package com.ibm.ws.jpa.diagnostics.orm.ano;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.math.BigInteger;
 import java.net.URL;
+import java.security.DigestOutputStream;
+import java.security.MessageDigest;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
@@ -22,6 +27,9 @@ import javax.xml.bind.Marshaller;
 import com.ibm.ws.jpa.diagnostics.orm.ano.jaxb.classinfo10.ClassInformationType;
 
 public class EntityMappingsScannerResults {
+    public static final String KEY_MD5HASH = "MD5HASH"; // Value is a String
+    public static final String KEY_CITXML = "CITXML";   // Value is byte[]
+    
     private final ClassInformationType cit;
     private final URL targetArchive;
     
@@ -36,6 +44,32 @@ public class EntityMappingsScannerResults {
 
     public URL getTargetArchive() {
         return targetArchive;
+    }
+    
+    public final Map<String, Object> produceXMLWithHash() throws ClassScannerException {
+        final HashMap<String, Object> retMap = new HashMap<String, Object>();
+        
+        try {
+            final JAXBContext jaxbCtx = JAXBContext.newInstance("com.ibm.ws.jpa.diagnostics.orm.ano.jaxb.classinfo10");
+            final Marshaller marshaller = jaxbCtx.createMarshaller();
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            final MessageDigest md = MessageDigest.getInstance("MD5");   
+            try (final DigestOutputStream dos = new DigestOutputStream(baos, md)) {
+                marshaller.marshal(cit, baos);
+                
+                BigInteger digestBigInt = new BigInteger(1, md.digest());
+                final String hashStr = digestBigInt.toString(16);
+                
+                retMap.put(KEY_MD5HASH, hashStr);
+                retMap.put(KEY_CITXML, baos.toByteArray());
+            }  
+        } catch (Exception e) {
+            throw new ClassScannerException(e);
+        } 
+        
+        return retMap;
     }
     
     public final byte[] produceXML() throws ClassScannerException {
