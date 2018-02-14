@@ -11,7 +11,6 @@
 
 package com.ibm.ws.jpaormscanner.tools.app_scanner;
 
-import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;

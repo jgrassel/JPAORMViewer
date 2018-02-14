@@ -6,6 +6,6 @@ apply plugin: 'war'
 
    dependencies {
    	    providedCompile 'javax.persistence:javax.persistence-api:2.2'
-    	providedCompile 'javax.servlet:javax.servlet-api:4.0.0'
-    	providedCompile 'javax.transaction:javax.transaction-api:1.2'
+    	    providedCompile 'javax.servlet:javax.servlet-api:4.0.0'
+    	    providedCompile 'javax.transaction:javax.transaction-api:1.2'
    }
