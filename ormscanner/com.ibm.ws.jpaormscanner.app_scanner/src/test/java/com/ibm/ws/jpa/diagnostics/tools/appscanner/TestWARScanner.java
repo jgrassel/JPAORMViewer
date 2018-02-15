@@ -147,7 +147,7 @@ public class TestWARScanner {
         assertNotNull(puScanResult.getEntityMappingsDefinitionsList());
         assertNotNull(puScanResult.getClassScannerResults());
         
-        assertEquals(0, puScanResult.getEntityMappingsDefinitionsList().size());
+        assertEquals(1, puScanResult.getEntityMappingsDefinitionsList().size());
         
         List<EntityMappingsScannerResults> scanResultsList = puScanResult.getClassScannerResults();
         assertEquals(1, scanResultsList.size());
