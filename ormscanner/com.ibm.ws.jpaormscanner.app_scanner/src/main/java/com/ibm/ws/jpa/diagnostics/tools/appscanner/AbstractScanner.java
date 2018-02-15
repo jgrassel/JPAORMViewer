@@ -21,6 +21,7 @@ import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -75,7 +76,7 @@ public abstract class AbstractScanner {
         
         if (Files.isDirectory(initContents)) {
             // Target is a directory, so copy its contents into the workspace temp dir
-            Files.copy(initContents, workSpace.getWorkspaceRoot());
+            Files.copy(initContents, workSpace.getWorkspaceRoot(), StandardCopyOption.REPLACE_EXISTING);
         } else {
             // Target is a file, assume is jar-format.  At least until greater intelligence is needed for this impl.           
             explodeArchiveFile(initContents, workSpace);
@@ -113,7 +114,7 @@ public abstract class AbstractScanner {
                     
                     // Make sure the parent directory exists, MANIFEST.MF can appear ahead of the entry for META-INF dir
                     if (newFilePath.getParent() != null && !Files.exists(newFilePath.getParent())) {
-                        Files.createDirectory(newFilePath.getParent());
+                        Files.createDirectories(newFilePath.getParent());
                     }
                     
                     newFilePath = Files.createFile(newFilePath);
