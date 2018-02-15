@@ -6,11 +6,6 @@
 
    <complexType name="PersistentArchiveScanResultType">
       <sequence>
-         <!-- Scan Environment -->
-         <element name="persistenceUnitRootURL" type="anyURI" minOccurs="1" maxOccurs="1" />
-         <element name="persistenceUnitRootPath" type="string" minOccurs="1" maxOccurs="1" />
-         <element name="relativePathLibraryJarPathMap" type="tns:RelativePathLibraryJarPathMapType" minOccurs="1"
-            maxOccurs="1" />
          <element name="persistence" type="tns:PersistenceParseResultType" minOccurs="1" maxOccurs="1" />
       </sequence>
 
@@ -32,13 +27,6 @@
    
    <complexType name="PersistenceParseResultType">
       <sequence>
-         <element name="version" minOccurs="1" maxOccurs="1">
-            <simpleType>
-               <restriction base="token">
-                  <pattern value="[0-9]+(\.[0-9]+)*" />
-               </restriction>
-            </simpleType>
-         </element>
          <element name="originalHash" type="string" minOccurs="1" maxOccurs="1">
             <annotation>
                <documentation>The hash of the original persistence.xml file as in the scanned archive.</documentation>
@@ -49,13 +37,29 @@
                <documentation>The hash of the persistence.xml reconstituted from the scanner's model.</documentation>
             </annotation>
          </element>
-         <element name="persistenceUnitDocument" type="string" minOccurs="0" maxOccurs="unbounded">
+         <element name="persistenceUnitDocument" type="tns:PersistenceUnitType" minOccurs="0" maxOccurs="unbounded">
             <annotation>
-               <documentation>The asset in the analyzer report bundle containing the persistence unit definition as
-                  reconstituted from the scanner's model.</documentation>
+               <documentation>
+                  The asset in the analyzer report bundle containing the persistence unit definition as reconstituted
+                  from the scanner's model.
+               </documentation>
             </annotation>
          </element>
       </sequence>
+      <attribute name="version">
+         <simpleType>
+            <restriction base="string">
+               <pattern value="[0-9]+(\.[0-9]+)*"></pattern>
+            </restriction>
+         </simpleType>
+      </attribute>
+   </complexType>
+   
+   <complexType name="PersistenceUnitType">
+       <sequence>
+            <element name="name" type="string" minOccurs="1" maxOccurs="1"/>
+            <element name="scanLoc" type="string" minOccurs="1" maxOccurs="1"/>
+       </sequence>
    </complexType>
 
 </schema>

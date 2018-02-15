@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="PersistenceUnitScanResult_1.0" xmlns:tns="PersistenceUnitScanResult_1.0" elementFormDefault="qualified">
+
+    <element name="PersistenceUnitScanResult" type="tns:PersistenceUnitScanResultType"></element>
+
+    <complexType name="PersistenceUnitScanResultType">
+       <sequence>
+          <element name="name" type="string" minOccurs="1" maxOccurs="1"></element>
+          <element name="classScanResult" type="tns:ClassScanResultType" minOccurs="0" maxOccurs="unbounded"></element>
+          <element name="ormScanResult" type="tns:ORMScanResultType" minOccurs="0" maxOccurs="unbounded"></element>
+       </sequence>
+    </complexType>
+    
+    <complexType name="ClassScanResultType">
+       <sequence>
+          <element name="location" minOccurs="1" maxOccurs="1">
+             <simpleType>
+                <restriction base="string">
+                   <enumeration value="PersistenceUnitRoot"></enumeration>
+                   <enumeration value="JarFile"></enumeration>
+                   <enumeration value="ClassPath"></enumeration>
+                </restriction>
+             </simpleType>
+          </element>
+          <element name="jarFilePath" type="string" minOccurs="0" maxOccurs="1"></element>
+          <element name="classScanPath" type="string" minOccurs="1" maxOccurs="1"></element>
+       </sequence>
+    </complexType>
+    
+    <complexType name="ORMScanResultType">
+        <sequence>
+            <element name="ormFilePath" type="string" minOccurs="1" maxOccurs="1"></element>
+            <element name="URL" type="anyURI" minOccurs="1" maxOccurs="1" />
+            <element name="ormHash" type="string" minOccurs="1" maxOccurs="1"></element>
+            <element name="scanHash" type="string" minOccurs="1" maxOccurs="1"></element>
+        </sequence>
+    </complexType>
+</schema>

@@ -17,6 +17,7 @@ import java.math.BigInteger;
 import java.net.URL;
 import java.security.DigestOutputStream;
 import java.security.MessageDigest;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +31,8 @@ import javax.xml.bind.Marshaller;
 
 import com.ibm.ws.jpa.diagnostics.orm.ano.EntityMappingsScannerResults;
 import com.ibm.ws.jpa.diagnostics.orm.ano.jaxb.classinfo10.ClassInformationType;
+import com.ibm.ws.jpa.diagnostics.orm.xml.EntityMappingsDefinition;
+import com.ibm.ws.jpa.diagnostics.orm.xml.entitymapping.IEntityMappings;
 import com.ibm.ws.jpa.diagnostics.puparser.PersistenceParseResult;
 import com.ibm.ws.jpa.diagnostics.puparser.pu.PUP_Persistence;
 import com.ibm.ws.jpa.diagnostics.puparser.pu.PUP_PersistenceUnit;
@@ -37,10 +40,14 @@ import com.ibm.ws.jpa.diagnostics.puscanner.PersistenceUnitScannerResults;
 import com.ibm.ws.jpa.diagnostics.tools.appscanner.LibraryJarReference;
 import com.ibm.ws.jpa.diagnostics.tools.appscanner.PersistentArchiveScanResult;
 import com.ibm.ws.jpa.diagnostics.tools.appscanner.WARScannerResult;
-import com.ibm.ws.jpa.diagnostics.tools.appscanner.report.puscanresult.v10.PersistenceParseResultType;
-import com.ibm.ws.jpa.diagnostics.tools.appscanner.report.puscanresult.v10.PersistentArchiveScanResultType;
-import com.ibm.ws.jpa.diagnostics.tools.appscanner.report.puscanresult.v10.RelativePathLibraryJarPathMapEntryType;
-import com.ibm.ws.jpa.diagnostics.tools.appscanner.report.puscanresult.v10.RelativePathLibraryJarPathMapType;
+import com.ibm.ws.jpa.diagnostics.tools.appscanner.report.pascanresult.v10.PersistenceParseResultType;
+import com.ibm.ws.jpa.diagnostics.tools.appscanner.report.pascanresult.v10.PersistenceUnitType;
+import com.ibm.ws.jpa.diagnostics.tools.appscanner.report.pascanresult.v10.PersistentArchiveScanResultType;
+import com.ibm.ws.jpa.diagnostics.tools.appscanner.report.pascanresult.v10.RelativePathLibraryJarPathMapEntryType;
+import com.ibm.ws.jpa.diagnostics.tools.appscanner.report.pascanresult.v10.RelativePathLibraryJarPathMapType;
+import com.ibm.ws.jpa.diagnostics.tools.appscanner.report.puscanresult.v10.ClassScanResultType;
+import com.ibm.ws.jpa.diagnostics.tools.appscanner.report.puscanresult.v10.ORMScanResultType;
+import com.ibm.ws.jpa.diagnostics.tools.appscanner.report.puscanresult.v10.PersistenceUnitScanResultType;
 
 public final class ReportGenerator {
     
@@ -48,6 +55,7 @@ public final class ReportGenerator {
         final PersistentArchiveScanResult pasr = warScanResult.getWebInfClassesPersistentArchiveScanResult();
         final PersistenceParseResult ppr = pasr.getPpr();
         final PUP_Persistence pupp = ppr.getPersistence();
+        final Map<String, URL> relPathLibJarPathMap = pasr.getRelativePathLibraryJarPathMap();
         
         final List<PersistenceUnitScannerResults> puScanResultsList = Collections.unmodifiableList(pasr.getPuScanResultsList());
         
@@ -55,12 +63,13 @@ public final class ReportGenerator {
         final RelativePathLibraryJarPathMapType rpljpmt = new RelativePathLibraryJarPathMapType();
         final PersistenceParseResultType pprt = new PersistenceParseResultType();
         
-        pasrt.setPersistenceUnitRootPath(pasr.getPuRootPath().toString());
-        pasrt.setPersistenceUnitRootURL(pasr.getPersistenceUnitRootURL().toExternalForm());        
-        pasrt.setRelativePathLibraryJarPathMap(rpljpmt);
+//        pasrt.setPersistenceUnitRootPath(pasr.getPuRootPath().toString());
+//        pasrt.setPersistenceUnitRootURL(pasr.getPersistenceUnitRootURL().toExternalForm());        
+//        pasrt.setRelativePathLibraryJarPathMap(rpljpmt);
         pasrt.setPersistence(pprt);
         
         pprt.setVersion(pupp.getVersion());
+        final List<PersistenceUnitType> puDocList = pprt.getPersistenceUnitDocument();
         
         final List<RelativePathLibraryJarPathMapEntryType> rpljpmetList = rpljpmt.getJarFile();
         final Map<String, LibraryJarReference> jfrm = pasr.getJarFileReferenceMap();
@@ -73,18 +82,28 @@ public final class ReportGenerator {
         
         
         try (final ZipOutputStream zos = new ZipOutputStream(out)) {
+
             for (PUP_PersistenceUnit puppu : pupp.pup_getPersistenceUnit()) {
-                Map<String, String> retTuple = processPersistenceUnit(puppu, zos); 
-                
+                final Map<String, String> retTuple = processPersistenceUnit(puppu, zos);                 
                 final String puName = retTuple.get(KEY_PU_NAME);
                 final String puPathRoot = retTuple.get(KEY_PU_REP_PATH);
                 
+                final PersistenceUnitType put = new PersistenceUnitType();
+                put.setName(puName);
+                put.setScanLoc(puPathRoot);
+                puDocList.add(put);
+                
+                final PersistenceUnitScanResultType pusrt = new PersistenceUnitScanResultType();
+                pusrt.setName(puName);
+                
                 for (PersistenceUnitScannerResults pusr : puScanResultsList) {
                     if (pusr.getPersistenceUnitName().equals(puName)) {
-                        processPersistenceScanResult(pusr, puPathRoot, zos);
+                        processPersistenceScanResult(pusrt, pusr, puPathRoot, relPathLibJarPathMap, zos);
                         break;
                     }
                 }
+                
+                writeJPAPUScannerResults(pusrt, puPathRoot, zos);
             }            
             
             writeJPAScannerResults(pasrt, zos);             
@@ -92,7 +111,7 @@ public final class ReportGenerator {
     }
     
     private static final void writeJPAScannerResults(final PersistentArchiveScanResultType pasrt, final ZipOutputStream zos) throws Exception {
-        JAXBContext pusrv10 = JAXBContext.newInstance("com.ibm.ws.jpa.diagnostics.tools.appscanner.report.puscanresult.v10");
+        JAXBContext pusrv10 = JAXBContext.newInstance("com.ibm.ws.jpa.diagnostics.tools.appscanner.report.pascanresult.v10");
         final Marshaller marshaller = pusrv10.createMarshaller();  
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
         
@@ -100,6 +119,22 @@ public final class ReportGenerator {
         marshaller.marshal(pasrt, baos);
         
         ZipEntry ze = new ZipEntry("JPAScannerResult.xml"); // TODO: Better to have this be a constant ref
+        ze.setSize(baos.size());
+        
+        zos.putNextEntry(ze);
+        zos.write(baos.toByteArray(), 0, baos.size());
+        zos.closeEntry();        
+    }
+    
+    private static final void writeJPAPUScannerResults(final PersistenceUnitScanResultType pusrt, final String puPathRoot, final ZipOutputStream zos) throws Exception {
+        JAXBContext pusrv10 = JAXBContext.newInstance("com.ibm.ws.jpa.diagnostics.tools.appscanner.report.puscanresult.v10");
+        final Marshaller marshaller = pusrv10.createMarshaller();  
+        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+        
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        marshaller.marshal(pusrt, baos);
+        
+        ZipEntry ze = new ZipEntry(puPathRoot + "PersistenceUnitScanResult.xml"); // TODO: Better to have this be a constant ref
         ze.setSize(baos.size());
         
         zos.putNextEntry(ze);
@@ -143,23 +178,84 @@ public final class ReportGenerator {
         return Collections.unmodifiableMap(retTuples);
     }
     
-    private static void processPersistenceScanResult(final PersistenceUnitScannerResults pusr, final String pathRoot, final ZipOutputStream zos) throws Exception {
+    private static void processPersistenceScanResult(final PersistenceUnitScanResultType pusrt, final PersistenceUnitScannerResults pusr, final String pathRoot, final Map<String, URL> relPathLibJarPathMap, final ZipOutputStream zos) throws Exception {
+//        final List<ClassScanResultType> csrtList = new ArrayList<ClassScanResultType>();
+        final String emPathRoot = pathRoot + "ORM/";
         final String citPathRoot = pathRoot + "/classes/";
+        
+        final List<ORMScanResultType> ormScanResultList = pusrt.getOrmScanResult();
+        
+        final List<EntityMappingsDefinition> emdList = pusr.getEntityMappingsDefinitionsList();
+        for (final EntityMappingsDefinition emd : emdList) {
+            IEntityMappings ieMappings = emd.getEntityMappings();
+            
+            final JAXBContext jaxbCtx = JAXBContext.newInstance(ieMappings.getClass());
+            final Marshaller marshaller = jaxbCtx.createMarshaller();
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+            
+            final ByteArrayOutputStream baos = new ByteArrayOutputStream();        
+            final MessageDigest md = MessageDigest.getInstance("MD5");   
+            final DigestOutputStream dos = new DigestOutputStream(baos, md);
+                   
+            marshaller.marshal(ieMappings, dos);
+            
+            BigInteger digestBigInt = new BigInteger(1, md.digest());
+            final String hashStr = digestBigInt.toString(16);
+            
+            
+            ORMScanResultType ormScanResult = new ORMScanResultType();
+            ormScanResultList.add(ormScanResult);
+            ormScanResult.setScanHash(hashStr);
+            ormScanResult.setURL(emd.getSource().toString());
+            ormScanResult.setOrmHash(emd.getHash().toString(16));
+            ormScanResult.setOrmFilePath("ORM/" + hashStr + ".xml");
+            
+            final ZipEntry ze = new ZipEntry(emPathRoot + hashStr + ".xml");
+            ze.setSize(baos.size());
+            
+            zos.putNextEntry(ze);
+            zos.write(baos.toByteArray(), 0, baos.size());
+            zos.closeEntry();
+        }
+        
+        final List<ClassScanResultType> classScanResultList = pusrt.getClassScanResult();
         
         final List<EntityMappingsScannerResults> emsrList = pusr.getClassScannerResults();
         for (final EntityMappingsScannerResults emsr : emsrList) {
-            final ClassInformationType cit = emsr.getCit();
-            
+            final ClassScanResultType csrt = new ClassScanResultType();
+            classScanResultList.add(csrt);
+                        
             final Map<String, Object> retVal = emsr.produceXMLWithHash();            
             final byte[] citAsXML = (byte[]) retVal.get(EntityMappingsScannerResults.KEY_CITXML);
             final String hash = (String) retVal.get(EntityMappingsScannerResults.KEY_MD5HASH);
             
-            final ZipEntry ze = new ZipEntry(citPathRoot + hash + ".xml");
+            final String name = citPathRoot + hash + ".xml";           
+            csrt.setClassScanPath("classes/" + hash + ".xml");
+            
+            final URL targetArchiveURL = emsr.getTargetArchive();
+            String jarFileLoc = null;
+            if (!relPathLibJarPathMap.isEmpty()) {
+                for (Map.Entry<String, URL> entry : relPathLibJarPathMap.entrySet()) {
+                    if (entry.getValue().equals(targetArchiveURL)) {
+                        jarFileLoc = entry.getKey();
+                        break;
+                    }
+                }
+            }
+            if (jarFileLoc == null) {
+                csrt.setLocation("PersistenceUnitRoot");
+            } else {
+                csrt.setLocation("JarFile");
+                csrt.setLocation(jarFileLoc);
+            }            
+            
+            final ZipEntry ze = new ZipEntry(name);
             ze.setSize(citAsXML.length);
             
             zos.putNextEntry(ze);
             zos.write(citAsXML, 0, citAsXML.length);
             zos.closeEntry();
         }
+        
     }
 }

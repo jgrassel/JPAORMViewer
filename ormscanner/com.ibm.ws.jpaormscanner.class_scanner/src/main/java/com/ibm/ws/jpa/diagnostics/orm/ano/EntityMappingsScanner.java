@@ -42,7 +42,7 @@ public final class EntityMappingsScanner {
         ClassInformationType cit = ems.scanTargetArchive();
         return new EntityMappingsScannerResults(cit, targetArchive);
     }
-
+    
     private final URL targetArchive;
     private final ClassLoader scannerCL;
     private final InnerOuterResolver ioResolver = new InnerOuterResolver();

@@ -44,8 +44,9 @@ public class EntityMappingsScannerResults {
 
     public URL getTargetArchive() {
         return targetArchive;
-    }
+    }  
     
+
     public final Map<String, Object> produceXMLWithHash() throws ClassScannerException {
         final HashMap<String, Object> retMap = new HashMap<String, Object>();
         
