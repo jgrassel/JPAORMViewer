@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<persistentArchiveScanResultType xmlns="PersistentArchiveScanResult_1.0">
+    <persistence version="2.1">
+        <persistenceUnitDocument>
+            <name>Test-Web-PU</name>
+            <scanLoc>a1de4dced19ce57b311eaacd11384d98/</scanLoc>
+        </persistenceUnitDocument>
+    </persistence>
+</persistentArchiveScanResultType>
