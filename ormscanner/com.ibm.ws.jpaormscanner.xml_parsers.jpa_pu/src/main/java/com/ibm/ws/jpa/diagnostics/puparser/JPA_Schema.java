@@ -14,7 +14,8 @@ package com.ibm.ws.jpa.diagnostics.puparser;
 public enum JPA_Schema {
     JPA_10 (Constants.SUN_NAMESPACE, Constants.SCHEMA_LOCATION_10, "1.0", Constants.JPA_10_JAXB_PACKAGE),
     JPA_20 (Constants.SUN_NAMESPACE, Constants.SCHEMA_LOCATION_20, "2.0", Constants.JPA_20_JAXB_PACKAGE),
-    JPA_21 (Constants.JCP_NAMESPACE, Constants.SCHEMA_LOCATION_21, "2.1", Constants.JPA_21_JAXB_PACKAGE);
+    JPA_21 (Constants.JCP_NAMESPACE, Constants.SCHEMA_LOCATION_21, "2.1", Constants.JPA_21_JAXB_PACKAGE),
+    JPA_22 (Constants.JCP_NAMESPACE, Constants.SCHEMA_LOCATION_22, "2.2", Constants.JPA_22_JAXB_PACKAGE);
     
     private String namespace;
     private String schema;

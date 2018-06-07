@@ -18,12 +18,13 @@ public final class Constants {
     public final static String JPA_10_JAXB_PACKAGE = "com.ibm.ws.jpa.diagnostics.puparser.jaxb.puxml10";
     public final static String JPA_20_JAXB_PACKAGE = "com.ibm.ws.jpa.diagnostics.puparser.jaxb.puxml20";
     public final static String JPA_21_JAXB_PACKAGE = "com.ibm.ws.jpa.diagnostics.puparser.jaxb.puxml21";
+    public final static String JPA_22_JAXB_PACKAGE = "com.ibm.ws.jpa.diagnostics.puparser.jaxb.puxml22";
     
     public final static String SUN_NAMESPACE = "http://java.sun.com/xml/ns/persistence"; // JPA 1.0 and 2.0
-    public final static String JCP_NAMESPACE = "http://xmlns.jcp.org/xml/ns/persistence"; // JPA 2.1
+    public final static String JCP_NAMESPACE = "http://xmlns.jcp.org/xml/ns/persistence"; // JPA 2.1 and 2.2
     
     public final static String SCHEMA_LOCATION_10 = "http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd";
     public final static String SCHEMA_LOCATION_20 = "http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd";
     public final static String SCHEMA_LOCATION_21 = "http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd";
-
+    public final static String SCHEMA_LOCATION_22 = "http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd";
 }

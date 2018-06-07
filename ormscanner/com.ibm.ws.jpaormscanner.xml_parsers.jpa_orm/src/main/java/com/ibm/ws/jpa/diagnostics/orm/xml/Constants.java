@@ -18,6 +18,7 @@ public final class Constants {
     public final static String JPA_10_JAXB_PACKAGE = "com.ibm.ws.jpa.diagnostics.orm.xml.jaxb.orm10xml";
     public final static String JPA_20_JAXB_PACKAGE = "com.ibm.ws.jpa.diagnostics.orm.xml.jaxb.orm20xml";
     public final static String JPA_21_JAXB_PACKAGE = "com.ibm.ws.jpa.diagnostics.orm.xml.jaxb.orm21xml";
-    public final static String JPA_DEFAULT_JAXB_PACKAGE = JPA_21_JAXB_PACKAGE;
+    public final static String JPA_22_JAXB_PACKAGE = "com.ibm.ws.jpa.diagnostics.orm.xml.jaxb.orm22xml";
+    public final static String JPA_DEFAULT_JAXB_PACKAGE = JPA_22_JAXB_PACKAGE;
     
 }
