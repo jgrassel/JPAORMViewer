@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+        targetNamespace="Encapsulaton_1.0" 
+        xmlns:tns="Encapsulaton_1.0" 
+        elementFormDefault="qualified">
+   
+   
+    <element name="dataGroup" type="tns:EncapsulatedDataGroupType"/>
+    <element name="dataItem" type="tns:EncapsulatedDataType"/>
+    
+    <complexType name="EncapsulatedDataGroupType">
+        <sequence>
+          <element name="dataGroup" type="tns:EncapsulatedDataGroupType" minOccurs="0" maxOccurs="unbounded" />
+          <element name="dataItem" type="tns:EncapsulatedDataType" minOccurs="0" maxOccurs="unbounded" />
+          <element name="properties" type="tns:PropertiesType" minOccurs="0" maxOccurs="1" />
+       </sequence>
+       <attribute name="id" type="ID" use="required"/>
+       <attribute name="name" type="string" use="required"/>
+    </complexType>
+        
+    <complexType name="EncapsulatedDataType">
+       <sequence>
+          <element name="data" type="base64Binary" minOccurs="0" maxOccurs="1" />
+           <element name="properties" type="tns:PropertiesType" minOccurs="0" maxOccurs="1" />
+       </sequence>
+       <attribute name="id" type="ID" use="required"/>
+       <attribute name="name" type="string" use="required"/>
+       <attribute name="hash-algorithm" type="string" use="required"/>
+       <attribute name="hash-value" type="string" use="required"/>
+       <attribute name="compression" use="required">
+          <simpleType>
+             <restriction base="string">
+                <enumeration value="NONE"></enumeration>
+                <enumeration value="GZIP"></enumeration>
+                <enumeration value="ZIP"></enumeration>
+             </restriction>
+          </simpleType>
+       </attribute>
+    </complexType>
+    
+    <!-- 
+        The properties schema construct enables a common-use means to define a body of properties (key-value pairs). 
+    -->
+    
+   <complexType name="PropertiesType">
+        <sequence>
+            <element name="property" type="tns:PropertyType" minOccurs="0" maxOccurs="unbounded" />
+        </sequence>
+   </complexType>
+   
+    <complexType name="PropertyType">
+        <attribute name="name" type="string" use="required"/>
+        <attribute name="value" type="string" use="required"/>
+        <attribute name="type" use="optional">
+            <simpleType>
+                    <restriction base="string">
+                    <enumeration value="boolean"></enumeration>
+                    <enumeration value="byte"></enumeration>
+                    <enumeration value="char"></enumeration>
+                    <enumeration value="float"></enumeration>
+                    <enumeration value="double"></enumeration>
+                    <enumeration value="int"></enumeration>
+                    <enumeration value="long"></enumeration>
+                    <enumeration value="short"></enumeration>
+                    <enumeration value="String"></enumeration>
+                </restriction>
+            </simpleType>          
+        </attribute>
+   </complexType>
+</schema>
