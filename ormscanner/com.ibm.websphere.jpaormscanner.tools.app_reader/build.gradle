@@ -4,11 +4,11 @@ jar.baseName = 'JPAAppReader'
 applicationName = 'JPAAppReader'
 
 dependencies {
-    compile project(':com.ibm.ws.jpaormscanner.app_scanner')
+        compile project(':com.ibm.ws.jpaormscanner.app_scanner')
 	compile project(':com.ibm.ws.jpaormscanner.class_scanner')
 	compile project(':com.ibm.ws.jpaormscanner.xml_parsers.jpa_orm')
 	compile project(':com.ibm.ws.jpaormscanner.xml_parsers.jpa_pu')
 	compile project(':com.ibm.ws.jpaormscanner.puscanner')
 	compile project(':com.ibm.ws.jpaormscanner.utils')
-	compile project(':com.ibm.ws.jpaormscanner.tools.app_scanner')
+	compile project(':com.ibm.websphere.jpaormscanner.tools.app_scanner')
 }
