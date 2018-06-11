@@ -1,6 +1,7 @@
 package com.ibm.ws.jpaormscanner.tools.app_reader.appdata;
 
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.zip.ZipEntry;
@@ -28,9 +29,14 @@ public class AppData {
             throw new FileNotFoundException("The file \"" + file.toString() + "\" does not exist.");
         }
         
-        try (final ZipFile zf = new ZipFile(file.toFile())) {
-            WarModuleData wmd = WarModuleData.loadWarModuleData(zf);
-        }        
+        try (InputStream is = Files.newInputStream(file)) {
+            WarModuleData wmd = WarModuleData.loadWarModuleData(is);
+        }
+       
+        
+//        try (final ZipFile zf = new ZipFile(file.toFile())) {
+//            WarModuleData wmd = WarModuleData.loadWarModuleData(zf);
+//        }        
     }
     
     

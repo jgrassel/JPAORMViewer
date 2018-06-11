@@ -28,6 +28,10 @@ import com.ibm.ws.jpa.diagnostics.utils.encapsulation.xsd10.PropertiesType;
 import com.ibm.ws.jpa.diagnostics.utils.encapsulation.xsd10.PropertyType;
 
 public class EncapsulatedData {
+    public static EncapsulatedData createEncapsulatedData(String name, String id,  byte[] data) throws Exception {
+        return createEncapsulatedData(name, id, CompressionType.GZIP, "MD5", data);
+    }
+    
     public static EncapsulatedData createEncapsulatedData(String name, String id, CompressionType ct, 
             String hashAlg, byte[] data) throws Exception {
         EncapsulatedDataType edt = new EncapsulatedDataType();
@@ -205,6 +209,11 @@ public class EncapsulatedData {
                 propList.remove(p);
             }
         }
+    }
+    
+    public InputStream getDataAsInputStream() throws Exception {
+        byte[] data = getData();
+        return new ByteArrayInputStream(data);
     }
     
     public byte[] getData() throws Exception {

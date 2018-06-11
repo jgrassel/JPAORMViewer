@@ -17,20 +17,15 @@ import java.math.BigInteger;
 import java.net.URL;
 import java.security.DigestOutputStream;
 import java.security.MessageDigest;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
 import com.ibm.ws.jpa.diagnostics.orm.ano.EntityMappingsScannerResults;
-import com.ibm.ws.jpa.diagnostics.orm.ano.jaxb.classinfo10.ClassInformationType;
 import com.ibm.ws.jpa.diagnostics.orm.xml.EntityMappingsDefinition;
 import com.ibm.ws.jpa.diagnostics.orm.xml.entitymapping.IEntityMappings;
 import com.ibm.ws.jpa.diagnostics.puparser.PersistenceParseResult;
@@ -48,6 +43,8 @@ import com.ibm.ws.jpa.diagnostics.tools.appscanner.report.pascanresult.v10.Relat
 import com.ibm.ws.jpa.diagnostics.tools.appscanner.report.puscanresult.v10.ClassScanResultType;
 import com.ibm.ws.jpa.diagnostics.tools.appscanner.report.puscanresult.v10.ORMScanResultType;
 import com.ibm.ws.jpa.diagnostics.tools.appscanner.report.puscanresult.v10.PersistenceUnitScanResultType;
+import com.ibm.ws.jpa.diagnostics.utils.encapsulation.EncapsulatedData;
+import com.ibm.ws.jpa.diagnostics.utils.encapsulation.EncapsulatedDataGroup;
 
 public final class ReportGenerator {
     
@@ -79,38 +76,38 @@ public final class ReportGenerator {
             rpljpmet.setURL(entry.getValue().getJarPath().toUri().toString());
         }
         
+        EncapsulatedDataGroup edg = EncapsulatedDataGroup.createEncapsulatedDataGroup("jpa-report", "jpa-report");
         
-        
-        try (final ZipOutputStream zos = new ZipOutputStream(out)) {
-
-            for (PUP_PersistenceUnit puppu : pupp.pup_getPersistenceUnit()) {
-                final Map<String, String> retTuple = processPersistenceUnit(puppu, zos);                 
-                final String puName = retTuple.get(KEY_PU_NAME);
-                final String puPathRoot = retTuple.get(KEY_PU_REP_PATH);
-                
-                final PersistenceUnitType put = new PersistenceUnitType();
-                put.setName(puName);
-                put.setScanLoc(puPathRoot);
-                puDocList.add(put);
-                
-                final PersistenceUnitScanResultType pusrt = new PersistenceUnitScanResultType();
-                pusrt.setName(puName);
-                
-                for (PersistenceUnitScannerResults pusr : puScanResultsList) {
-                    if (pusr.getPersistenceUnitName().equals(puName)) {
-                        processPersistenceScanResult(pusrt, pusr, puPathRoot, relPathLibJarPathMap, zos);
-                        break;
-                    }
-                }
-                
-                writeJPAPUScannerResults(pusrt, puPathRoot, zos);
-            }            
+        for (PUP_PersistenceUnit puppu : pupp.pup_getPersistenceUnit()) {
+            final Map<String, String> retTuple = processPersistenceUnit(puppu, edg);                 
+            final String puName = retTuple.get(KEY_PU_NAME);
+            final String puPathRoot = retTuple.get(KEY_PU_REP_PATH);
             
-            writeJPAScannerResults(pasrt, zos);             
-        }
+            final PersistenceUnitType put = new PersistenceUnitType();
+            put.setName(puName);
+            put.setScanLoc(puPathRoot);
+            puDocList.add(put);
+            
+            final PersistenceUnitScanResultType pusrt = new PersistenceUnitScanResultType();
+            pusrt.setName(puName);
+            
+            for (PersistenceUnitScannerResults pusr : puScanResultsList) {
+                if (pusr.getPersistenceUnitName().equals(puName)) {
+                    processPersistenceScanResult(pusrt, pusr, puPathRoot, relPathLibJarPathMap, edg);
+                    break;
+                }
+            }
+            
+            writeJPAPUScannerResults(pusrt, puPathRoot, edg);
+        }            
+        
+        writeJPAScannerResults(pasrt, edg);   
+        
+        edg.writeToString(out);
     }
     
-    private static final void writeJPAScannerResults(final PersistentArchiveScanResultType pasrt, final ZipOutputStream zos) throws Exception {
+    private static final void writeJPAScannerResults(final PersistentArchiveScanResultType pasrt, 
+            final EncapsulatedDataGroup edg) throws Exception {
         JAXBContext pusrv10 = JAXBContext.newInstance("com.ibm.ws.jpa.diagnostics.tools.appscanner.report.pascanresult.v10");
         final Marshaller marshaller = pusrv10.createMarshaller();  
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
@@ -118,15 +115,13 @@ public final class ReportGenerator {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         marshaller.marshal(pasrt, baos);
         
-        ZipEntry ze = new ZipEntry("JPAScannerResult.xml"); // TODO: Better to have this be a constant ref
-        ze.setSize(baos.size());
-        
-        zos.putNextEntry(ze);
-        zos.write(baos.toByteArray(), 0, baos.size());
-        zos.closeEntry();        
+        EncapsulatedData ed = EncapsulatedData.createEncapsulatedData("JPAScannerResult.xml", 
+                "JPAScannerResult.xml", baos.toByteArray());
+        edg.putDataItem(ed);
     }
     
-    private static final void writeJPAPUScannerResults(final PersistenceUnitScanResultType pusrt, final String puPathRoot, final ZipOutputStream zos) throws Exception {
+    private static final void writeJPAPUScannerResults(final PersistenceUnitScanResultType pusrt, 
+            final String puPathRoot, final EncapsulatedDataGroup edg) throws Exception {
         JAXBContext pusrv10 = JAXBContext.newInstance("com.ibm.ws.jpa.diagnostics.tools.appscanner.report.puscanresult.v10");
         final Marshaller marshaller = pusrv10.createMarshaller();  
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
@@ -134,18 +129,15 @@ public final class ReportGenerator {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         marshaller.marshal(pusrt, baos);
         
-        ZipEntry ze = new ZipEntry(puPathRoot + "PersistenceUnitScanResult.xml"); // TODO: Better to have this be a constant ref
-        ze.setSize(baos.size());
-        
-        zos.putNextEntry(ze);
-        zos.write(baos.toByteArray(), 0, baos.size());
-        zos.closeEntry();        
+        EncapsulatedData ed = EncapsulatedData.createEncapsulatedData(puPathRoot + "PersistenceUnitScanResult.xml", 
+                puPathRoot + "PersistenceUnitScanResult.xml", baos.toByteArray());
+        edg.putDataItem(ed);
     }
     
     public static final String KEY_PU_NAME = "Persistence Unit Name";
     public static final String KEY_PU_REP_PATH = "Persistence Unit Report Path Root";
     
-    private static final Map<String, String> processPersistenceUnit(final PUP_PersistenceUnit puppu, final ZipOutputStream zos) throws Exception {
+    private static final Map<String, String> processPersistenceUnit(final PUP_PersistenceUnit puppu, final EncapsulatedDataGroup edg) throws Exception {
         final JAXBContext jaxbCtx = JAXBContext.newInstance(puppu.getClass());
         final Marshaller marshaller = jaxbCtx.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
@@ -163,13 +155,8 @@ public final class ReportGenerator {
         final String pathRoot = hashStr + "/";
         final String puXML = pathRoot + "persistenceUnit.xml";
         
-        final ZipEntry ze = new ZipEntry(puXML);
-        ze.setSize(baos.size());
-        ze.setComment("Persistence Unit Name: " + puppu.getName());
-        
-        zos.putNextEntry(ze);
-        zos.write(baos.toByteArray(), 0, baos.size());
-        zos.closeEntry();
+        EncapsulatedData ed = EncapsulatedData.createEncapsulatedData(puXML, puXML, baos.toByteArray());      
+        edg.putDataItem(ed);
         
         HashMap<String, String> retTuples = new HashMap<String, String>();
         retTuples.put(KEY_PU_NAME, puName);
@@ -178,7 +165,9 @@ public final class ReportGenerator {
         return Collections.unmodifiableMap(retTuples);
     }
     
-    private static void processPersistenceScanResult(final PersistenceUnitScanResultType pusrt, final PersistenceUnitScannerResults pusr, final String pathRoot, final Map<String, URL> relPathLibJarPathMap, final ZipOutputStream zos) throws Exception {
+    private static void processPersistenceScanResult(final PersistenceUnitScanResultType pusrt, 
+            final PersistenceUnitScannerResults pusr, final String pathRoot, 
+            final Map<String, URL> relPathLibJarPathMap, final EncapsulatedDataGroup edg) throws Exception {
 //        final List<ClassScanResultType> csrtList = new ArrayList<ClassScanResultType>();
         final String emPathRoot = pathRoot + "ORM/";
         final String citPathRoot = pathRoot + "/classes/";
@@ -210,12 +199,9 @@ public final class ReportGenerator {
             ormScanResult.setOrmHash(emd.getHash().toString(16));
             ormScanResult.setOrmFilePath("ORM/" + hashStr + ".xml");
             
-            final ZipEntry ze = new ZipEntry(emPathRoot + hashStr + ".xml");
-            ze.setSize(baos.size());
-            
-            zos.putNextEntry(ze);
-            zos.write(baos.toByteArray(), 0, baos.size());
-            zos.closeEntry();
+            String name = emPathRoot + hashStr + ".xml";
+            EncapsulatedData ed = EncapsulatedData.createEncapsulatedData(name, name, baos.toByteArray());
+            edg.putDataItem(ed);
         }
         
         final List<ClassScanResultType> classScanResultList = pusrt.getClassScanResult();
@@ -249,12 +235,8 @@ public final class ReportGenerator {
                 csrt.setLocation(jarFileLoc);
             }            
             
-            final ZipEntry ze = new ZipEntry(name);
-            ze.setSize(citAsXML.length);
-            
-            zos.putNextEntry(ze);
-            zos.write(citAsXML, 0, citAsXML.length);
-            zos.closeEntry();
+            EncapsulatedData ed = EncapsulatedData.createEncapsulatedData(name, name, citAsXML);
+            edg.putDataItem(ed);
         }
         
     }

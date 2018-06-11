@@ -1,5 +1,6 @@
 package com.ibm.ws.jpa.diagnostics.utils.encapsulation;
 
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,6 +11,7 @@ import java.util.Set;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 
 import com.ibm.ws.jpa.diagnostics.utils.encapsulation.xsd10.EncapsulatedDataGroupType;
 import com.ibm.ws.jpa.diagnostics.utils.encapsulation.xsd10.EncapsulatedDataType;
@@ -23,6 +25,16 @@ public class EncapsulatedDataGroup {
         edg.setName(name);
         return edg;
     }
+    
+    public static EncapsulatedDataGroup createEncapsulatedDataGroup(InputStream is) throws Exception {
+        JAXBContext jc = JAXBContext.newInstance(EncapsulatedDataGroupType.class);
+        Unmarshaller um = jc.createUnmarshaller();
+        
+        EncapsulatedDataGroupType edt = (EncapsulatedDataGroupType) um.unmarshal(is);
+        EncapsulatedDataGroup edg = new EncapsulatedDataGroup(edt);
+        return edg;
+    }
+    
     
     private EncapsulatedDataGroupType edgt;
     private Map<String, EncapsulatedDataGroup> childDataGroupsMap = 
