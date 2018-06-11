@@ -20,9 +20,9 @@ import java.util.List;
 
 import javax.persistence.spi.PersistenceUnitInfo;
 
-import com.ibm.ws.jpa.diagnostics.orm.ano.ClassScannerException;
-import com.ibm.ws.jpa.diagnostics.orm.ano.EntityMappingsScanner;
-import com.ibm.ws.jpa.diagnostics.orm.ano.EntityMappingsScannerResults;
+import com.ibm.ws.jpa.diagnostics.class_scanner.ano.ClassScannerException;
+import com.ibm.ws.jpa.diagnostics.class_scanner.ano.EntityMappingsScanner;
+import com.ibm.ws.jpa.diagnostics.class_scanner.ano.EntityMappingsScannerResults;
 import com.ibm.ws.jpa.diagnostics.ormparser.EntityMappingsDefinition;
 import com.ibm.ws.jpa.diagnostics.ormparser.EntityMappingsException;
 import com.ibm.ws.jpa.diagnostics.ormparser.EntityMappingsFactory;

@@ -25,7 +25,7 @@ import java.util.Map;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
-import com.ibm.ws.jpa.diagnostics.orm.ano.EntityMappingsScannerResults;
+import com.ibm.ws.jpa.diagnostics.class_scanner.ano.EntityMappingsScannerResults;
 import com.ibm.ws.jpa.diagnostics.ormparser.EntityMappingsDefinition;
 import com.ibm.ws.jpa.diagnostics.ormparser.entitymapping.IEntityMappings;
 import com.ibm.ws.jpa.diagnostics.puparser.PersistenceParseResult;

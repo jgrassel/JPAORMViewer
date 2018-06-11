@@ -16,7 +16,7 @@ import java.util.List;
 
 import javax.persistence.spi.PersistenceUnitInfo;
 
-import com.ibm.ws.jpa.diagnostics.orm.ano.EntityMappingsScannerResults;
+import com.ibm.ws.jpa.diagnostics.class_scanner.ano.EntityMappingsScannerResults;
 import com.ibm.ws.jpa.diagnostics.ormparser.EntityMappingsDefinition;
 
 public final class PersistenceUnitScannerResults {
