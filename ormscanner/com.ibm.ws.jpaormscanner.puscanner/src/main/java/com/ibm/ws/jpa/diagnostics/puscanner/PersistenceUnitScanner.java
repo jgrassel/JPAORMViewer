@@ -23,9 +23,9 @@ import javax.persistence.spi.PersistenceUnitInfo;
 import com.ibm.ws.jpa.diagnostics.orm.ano.ClassScannerException;
 import com.ibm.ws.jpa.diagnostics.orm.ano.EntityMappingsScanner;
 import com.ibm.ws.jpa.diagnostics.orm.ano.EntityMappingsScannerResults;
-import com.ibm.ws.jpa.diagnostics.orm.xml.EntityMappingsDefinition;
-import com.ibm.ws.jpa.diagnostics.orm.xml.EntityMappingsException;
-import com.ibm.ws.jpa.diagnostics.orm.xml.EntityMappingsFactory;
+import com.ibm.ws.jpa.diagnostics.ormparser.EntityMappingsDefinition;
+import com.ibm.ws.jpa.diagnostics.ormparser.EntityMappingsException;
+import com.ibm.ws.jpa.diagnostics.ormparser.EntityMappingsFactory;
 
 public final class PersistenceUnitScanner {
     public static PersistenceUnitScannerResults scanPersistenceUnit(PersistenceUnitInfo pUnit) 

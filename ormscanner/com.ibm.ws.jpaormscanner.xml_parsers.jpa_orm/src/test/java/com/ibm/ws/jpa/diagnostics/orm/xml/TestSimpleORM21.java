@@ -22,10 +22,10 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.ibm.ws.jpa.diagnostics.orm.xml.EntityMappingsDefinition;
-import com.ibm.ws.jpa.diagnostics.orm.xml.EntityMappingsFactory;
-import com.ibm.ws.jpa.diagnostics.orm.xml.entitymapping.IEntity;
-import com.ibm.ws.jpa.diagnostics.orm.xml.entitymapping.IEntityMappings;
+import com.ibm.ws.jpa.diagnostics.ormparser.EntityMappingsDefinition;
+import com.ibm.ws.jpa.diagnostics.ormparser.EntityMappingsFactory;
+import com.ibm.ws.jpa.diagnostics.ormparser.entitymapping.IEntity;
+import com.ibm.ws.jpa.diagnostics.ormparser.entitymapping.IEntityMappings;
 
 public class TestSimpleORM21 {
     private static File cDir;
