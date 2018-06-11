@@ -10,5 +10,5 @@ dependencies {
 	compile project(':com.ibm.ws.jpaormscanner.xml_parsers.jpa_pu')
 	compile project(':com.ibm.ws.jpaormscanner.puscanner')
 	compile project(':com.ibm.ws.jpaormscanner.utils')
-	compile project(':com.ibm.ws.jpaormscanner.tools.common')
+	compile project(':com.ibm.websphere.jpaormscanner.tools.common')
 }
