@@ -94,6 +94,14 @@ public class EncapsulatedDataGroup {
     }
     
     public EncapsulatedDataGroup putDataSubGroup(EncapsulatedDataGroup group) {
+        if (group == null) {
+            return null;
+        }
+
+        internalRemoveDataGroup(group.getId());
+        List<EncapsulatedDataGroupType> dataGroups = edgt.getDataGroup();
+        dataGroups.add(group.edgt);
+
         return childDataGroupsMap.put(group.getId(), group);
     }
     
@@ -102,6 +110,10 @@ public class EncapsulatedDataGroup {
     }
     
     public void removeDataSubGroup(String id) {
+        if (id == null) {
+            return;
+        }
+        internalRemoveDataGroup(id);
         childDataGroupsMap.remove(id);
     }
     
@@ -127,6 +139,24 @@ public class EncapsulatedDataGroup {
         internalRemoveDataItem(id);
     }
     
+    private void internalRemoveDataGroup(String id) {
+        List<EncapsulatedDataGroupType> dataGroups = edgt.getDataGroup();
+        List<EncapsulatedDataGroupType> removeList = new ArrayList<EncapsulatedDataGroupType>();
+
+        for (EncapsulatedDataGroupType dgItem : dataGroups) {
+            if (dgItem.getId().equals(id)) {
+                removeList.add(dgItem);
+            }
+        }
+
+        if (removeList.size() > 0) {
+            for (EncapsulatedDataGroupType dgItem : removeList) {
+                dataGroups.remove(dgItem);
+            }
+        }
+
+    }
+
     private void internalRemoveDataItem(String id) {
         List<EncapsulatedDataType> dataItems = edgt.getDataItem();
         List<EncapsulatedDataType> removeList = new ArrayList<EncapsulatedDataType>();
