@@ -21,6 +21,7 @@ import java.security.DigestOutputStream;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -156,9 +157,37 @@ public class EncapsulatedData {
         final String hashStr = digestBigInt.toString(16);
         
         edt.setHashValue(hashStr);
-        edt.setData(baos.toByteArray());
+        edt.setData(encodeData(baos.toByteArray()));
     }
     
+    private String encodeData(byte[] data) {
+        if (data == null) {
+            return "";
+        }
+        
+        Base64.Encoder encoder = Base64.getEncoder();
+        String encodedData = encoder.encodeToString(data);
+        String[] lines = encodedData.split("(?<=\\G.{80})");
+        
+        StringBuilder sb = new StringBuilder();
+        sb.append("\n");
+        for (String line : lines) {
+            sb.append(line).append("\n");
+        }
+        return sb.toString();
+    }
+    
+    private byte[] decodeData(String dataBase64) {
+        if (dataBase64 == null || "".equals(dataBase64.trim())) {
+            return null;
+        }
+        
+        dataBase64 = dataBase64.replaceAll("\\n", "");
+        Base64.Decoder decoder = Base64.getDecoder();
+        data = decoder.decode(dataBase64);
+        return data;
+    }
+
     public Map<String, String> getProperties() {
         HashMap<String, String> propertiesMap = new HashMap<String, String>();
         
@@ -227,10 +256,12 @@ public class EncapsulatedData {
         return new ByteArrayInputStream(data);
     }
     
+    
     public byte[] getData() throws Exception {
         if (data == null) {
-            data = edt.getData();
-            
+            Base64.Decoder decoder = Base64.getDecoder();
+            data = decodeData(edt.getData()); //  decoder.decode(edt.getData());
+
             if (data == null) {
                 return new byte[0];
             }

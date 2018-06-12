@@ -40,7 +40,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="data" type="{http://www.w3.org/2001/XMLSchema}base64Binary" minOccurs="0"/>
+ *         &lt;element name="data" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="properties" type="{Encapsulaton_1.0}PropertiesType" minOccurs="0"/>
  *       &lt;/sequence>
  *       &lt;attribute name="id" use="required" type="{http://www.w3.org/2001/XMLSchema}ID" />
@@ -71,7 +71,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 @XmlRootElement
 public class EncapsulatedDataType {
 
-    protected byte[] data;
+    protected String data;
     protected PropertiesType properties;
     @XmlAttribute(name = "id", required = true)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
@@ -92,9 +92,9 @@ public class EncapsulatedDataType {
      * 
      * @return
      *     possible object is
-     *     byte[]
+     *     {@link String }
      */
-    public byte[] getData() {
+    public String getData() {
         return data;
     }
 
@@ -103,9 +103,9 @@ public class EncapsulatedDataType {
      * 
      * @param value
      *     allowed object is
-     *     byte[]
+     *     {@link String }
      */
-    public void setData(byte[] value) {
+    public void setData(String value) {
         this.data = value;
     }
 
