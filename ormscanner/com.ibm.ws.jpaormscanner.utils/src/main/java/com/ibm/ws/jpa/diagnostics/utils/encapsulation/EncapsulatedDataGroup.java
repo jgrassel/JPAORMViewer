@@ -134,6 +134,16 @@ public class EncapsulatedDataGroup {
         return childDataMap.get(id);
     }
     
+    public EncapsulatedData getDataItemByName(String name) {
+        for (Map.Entry<String, EncapsulatedData> e : childDataMap.entrySet()) {
+            if (e.getValue().getName().equals(name)) {
+                return e.getValue();
+            }
+        }
+        
+        return null;
+    }
+    
     public void removeDataItem(String id) {
         childDataMap.remove(id);
         internalRemoveDataItem(id);

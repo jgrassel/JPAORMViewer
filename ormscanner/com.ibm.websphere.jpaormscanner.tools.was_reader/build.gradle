@@ -1,0 +1,12 @@
+apply plugin: 'application'
+mainClassName = "com.ibm.ws.jpaormscanner.tools.was_reader.WASJPAAppReader"
+jar.baseName = 'WASJPAReader'
+applicationName = 'WASJPAReader'
+
+dependencies {
+	compile project(':com.ibm.ws.jpaormscanner.class_scanner')
+	compile project(':com.ibm.ws.jpaormscanner.xml_parsers.jpa_orm')
+	compile project(':com.ibm.ws.jpaormscanner.xml_parsers.jpa_pu')
+	compile project(':com.ibm.ws.jpaormscanner.puscanner')
+	compile project(':com.ibm.ws.jpaormscanner.utils')
+}

@@ -30,7 +30,7 @@ public class TestEncapsulatedData {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ed.writeToString(baos);
         
-//        System.out.println(baos);
+        System.out.println(baos);
         
         ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
         EncapsulatedData edRead = EncapsulatedData.readEncapsulatedData(bais);

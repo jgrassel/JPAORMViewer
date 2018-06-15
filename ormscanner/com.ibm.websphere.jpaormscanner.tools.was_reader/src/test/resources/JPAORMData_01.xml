@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<encapsulatedDataGroupType xmlns="Encapsulaton_1.0" id="ORMDiagnostics" name="ORMDiagnostics">
+    <dataGroup id="ClassScanner" name="ClassScanner">
+        <dataItem id="1" name="wsjpa:wsjar:file:/Users/arcticfox/Dev/Liberty/open-liberty/dev/build.image/wlp/usr/servers/JPA22InjectionServer/apps/jpa22injection.war%21/WEB-INF/classes/" hash-algorithm="MD5" hash-value="7aee8ab98ee328b1a16088edf6f3206" compression="GZIP">
+            <data>
+H4sIAAAAAAAAAO1b3XPiNhB/z1+h8cO9nd0wczOdHnADlFxp0zvKR+4xo9gbotSWXUnm4L+v/G3AMpgE
+gjPOQxK0q/Xu/n6Spc2m/WXl2GgJjBOXdrRr/RcNATVdi9BFR5vPbj7+qiEuMLWw7VLoaGvg2pfuVdu0
+Mecj+ugyBws5d7b2AElblHe0QSK7D+x1r5D8yiYgih1paESfwRRDKohY9zQUir+FkmcPt1okFEvDOoQq
++pY+9z1g+Ul4iXUb04X+/SFQ1JCHzX/xAkpsaojwHnXp2nF96fYjtjkEY0PqO7mPIyqAPWITcmPTNRVP
+IIiZjqU5/NSKQw7DdmQqH4mUZWMb493xvH87GrSNdCCbaxRMbmNKXRGmfNtkJolTPIyjFBKbKEMr3Qvc
+5EJiDHosN/bZmeEHG9RmIvGmkdTQX7C+w/auMFQIzHeDb20j/LVYa4ltH3JPj2CeCiY5WvDYdB4njmdD
+NyLOvQz2vtc24sHiJxnhowoiMVShRJIoW/vSGDDR+scHRuQaUmZzQ+vopIaBlGZVyaMDgyjhVU5HbXon
+mF02HIJ8gvIjoVbPtuP9IcNZiemGH0p8D/D4vyDQY1yeDm+HgxnC6Gby/W+0sb8hfJII1GzdibE2oMcZ
+669HVv1RRz/+GE6GCOvEQh30GzlNSPtpkNco2B6q7ocKc235brOt7ddYOBgTj1gJ4eTpY1H44i3wTvHO
+3ZF3x5PRXW82LHr5Zq6XWNu/ie6upZGlXkNSZhxq5ytQYFiAdRfQQm1zS6/AfgnYbSNEowQhLtjvWGBN
+Rf73AFkfc2KqMxyJX5jYeCC/OhwQT+7O8ohGUfQjOtx+sMVnQon4sBCfNcRA+Cw8j3e0pRusIMIHwmUd
+TTD/hclXnlX35l4KQo/3R7MAEayRfBjJ4o/CeAUSnSMOvhvHJhxvGkco9DCTrgr1k1KFrV14zIhDBFlC
+TKrgIsUYXpfdkAoXiMqDSnSZJntQPtdFO9EF5L0SfwoDqz2JipDJESpl0FsxSriJX7XkUzISK7aNtPKi
+qMT8Oe6NksrIDLiYAlvaIMpqMj/hQVdO2y7NmK7juRSoEFJLx56n3/RmqXZZmUY+5r3XaH7AQ5qK/AGD
+R4N6NkHPqR5dF/CZPcYSCEb5wTWXcB2WFVpwoKBc3DbQhXjqaNf77oWSIWyN5JUOVh0tqBtWuVYZAQUl
+JVutlJSV706hA6XXpiDQN6kdjbPz5sCVXF+JkhJSkfLlVZJ2vawS0fmKDOBcn7Ow4MuD/LcjXZX8H88/
+nsbdY2tH9YG5VS+YT+Pu2WtDaX5UrJnLTB222UWaF73TBS4eHMtZ97jJbb3ofyqHX2Gfu1iQW3UD+VQO
+16cCLlabTBIMU46j69FcXhJm2ed3UWudAHd9Zm4VtHO3oFShKbiWAlCh3iFvTtGlqeisdsmlpyP4FVwT
+E265bKE/B5uUHo5WI1QohpUJXtnzUwWU/rZdThomgmIHVI94Ib7RO6oB9z2Am4N1zNwlsYBlf42fgAdY
+BC06vTTaBvj6AF+5nJtvKehXbKzrN411TWPdEY11/TM11jWNJE0jSY0haxpJmkaS6nE0jSRNI0nTSFJA
+oqaR5BUhqHbzyH3I/QNQ9+p/E68I+1A0AAA=
+</data>
+        </dataItem>
+    </dataGroup>
+    <dataGroup id="EntityMappings" name="EntityMappings"/>
+    <dataItem id="0" name="persistence.xml" hash-algorithm="MD5" hash-value="77730fab1f7fe2ac95917472661dc2dc" compression="GZIP">
+        <data>
+H4sIAAAAAAAAAO1TwW7bMAy99ytY32Wl3i1wA2RZDhu8JkhWoLeAlYhGniIbptwkf19ZyRov2IZghwED
+cjPJ9/ioRzOvqWHDnpwi2G2s4/tk7X09lDJGaanqtGpeukg6lj14cgMHxnDH5p213W7T7YdIyQaDO/n0
+tViqNW1QGMcef/DYDDmmi0qhN5W7WBYuxPW/V9kqS3esO+nXLt3pZWmWjEICIO9BReuMB4cbuk++zMfz
+R3F3REWkssg8KmvMMuNKUt3oKTlv/D79HBPTGIxzeYCeqLRTttWdgO20tIgAYtnD1E0VZvGGesRYuBUC
+psqamqkw7jvwumqtBtUQegK/JtDo8RmZ4OArYOurTbBWobV7EOKs4VFpf3wqHXrb0DvV2ooXctTExSTw
+irYNEB0YAl2YO4qKIGeJE+jPL88fkMtzby+xPPsbyz9eLf+j5Zf86osiAd+gY4w2C7+vQ3ExXc4eF5Pp
+qphNxkV/Ny5gSo+ic0Jw1TaKRqV+VvKhct9OfdB+CoBlrOfyV6Trhf3jC/uPNn097N9v+qfc6A3Lr42J
+zgcAAA==
+</data>
+    </dataItem>
+    <properties>
+        <property name="execution.environment" value="WebSphere Liberty" type="java.lang.String"/>
+        <property name="Persistence Unit Name" value="JPAPU-1" type="java.lang.String"/>
+        <property name="Persistence Unit Root" value="wsjpa:wsjar:file:/Users/arcticfox/Dev/Liberty/open-liberty/dev/build.image/wlp/usr/servers/JPA22InjectionServer/apps/jpa22injection.war%21/WEB-INF/classes/" type="java.lang.String"/>
+        <property name="Persistence Schema Version" value="2.2" type="java.lang.String"/>
+    </properties>
+</encapsulatedDataGroupType>
