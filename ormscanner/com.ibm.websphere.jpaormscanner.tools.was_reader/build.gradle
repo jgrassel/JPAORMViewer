@@ -1,5 +1,5 @@
 apply plugin: 'application'
-mainClassName = "com.ibm.ws.jpaormscanner.tools.was_reader.WASJPAAppReader"
+mainClassName = "com.ibm.ws.jpaormscanner.tools.was_reader.WASReader"
 jar.baseName = 'WASJPAReader'
 applicationName = 'WASJPAReader'
 
