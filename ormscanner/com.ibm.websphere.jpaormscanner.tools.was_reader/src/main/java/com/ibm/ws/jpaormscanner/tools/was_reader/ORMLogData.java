@@ -11,6 +11,7 @@
 
 package com.ibm.ws.jpaormscanner.tools.was_reader;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
@@ -43,6 +44,13 @@ public class ORMLogData {
         return logData;
     }
     
+    public static ORMLogData createORMLogData(String data) throws Exception {
+        ORMLogData logData =  new ORMLogData(data);
+        logData.open();
+        return logData;
+    }
+    
+    private String data;
     private File file;
     private EncapsulatedDataGroup edg;
     
@@ -60,12 +68,22 @@ public class ORMLogData {
         this.file = file;
     }
     
+    private ORMLogData(String data) {
+        this.data = data;
+    }
+    
     private void open() throws Exception {
-        System.out.println("Opening file " + file.getAbsolutePath());
-        try (FileInputStream fis = new FileInputStream(file)) {
-            edg = EncapsulatedDataGroup.createEncapsulatedDataGroup(fis);
+        if (file != null) {
+            System.out.println("Opening file " + file.getAbsolutePath());
+            try (FileInputStream fis = new FileInputStream(file)) {
+                edg = EncapsulatedDataGroup.createEncapsulatedDataGroup(fis);
+            }
+        } else {
+            try (ByteArrayInputStream bais = new ByteArrayInputStream(data.getBytes())) {
+                edg = EncapsulatedDataGroup.createEncapsulatedDataGroup(bais);
+            }
         }
-        
+               
         // Process Persistence Unit Info
         persistenceUnitName = edg.getProperties().get("Persistence Unit Name");       
         loadPersistenceXml();
@@ -108,7 +126,12 @@ public class ORMLogData {
     }
     private void loadPersistenceXml() throws Exception {
         EncapsulatedData ed = edg.getDataItemByName("persistence.xml");
-        persistenceXml = new String(ed.getData());       
+        if (ed != null) {
+            persistenceXml = new String(ed.getData());      
+        } else {
+            persistenceXml = "<< The persistence.xml file is unavailable >>\n";
+        }
+         
     }
     
     // Scanned Classes Access

@@ -36,8 +36,11 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 @SuppressWarnings("restriction")
@@ -85,6 +88,63 @@ public class WASReaderApplication extends Application  {
             } });
         menuFile.getItems().add(open);
         
+        MenuItem pasteIn = new MenuItem("Paste In...");
+        pasteIn.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent event) {
+                final Stage dialog = new Stage();
+                dialog.initModality(Modality.APPLICATION_MODAL);
+                dialog.initOwner(stage);
+                
+                VBox dialogVbox = new VBox(20);
+                dialogVbox.getChildren().add(new Text("Paste in the JPA ORM Diagnostic XML data below:"));
+
+                TextArea pasteArea = new TextArea();
+                pasteArea.setEditable(true);
+                dialogVbox.getChildren().add(pasteArea);
+                VBox.setVgrow(pasteArea, javafx.scene.layout.Priority.ALWAYS);
+                
+                HBox buttonHBox = new HBox();
+                
+                javafx.scene.control.Button submitButton = new javafx.scene.control.Button("Submit");
+                javafx.scene.control.Button cancelButton = new javafx.scene.control.Button("Cancel");
+                
+                javafx.scene.layout.Region lRegion = new javafx.scene.layout.Region();
+                javafx.scene.layout.Region mRegion = new javafx.scene.layout.Region();
+                javafx.scene.layout.Region rRegion = new javafx.scene.layout.Region();
+                HBox.setHgrow(lRegion, javafx.scene.layout.Priority.ALWAYS);
+                HBox.setHgrow(mRegion, javafx.scene.layout.Priority.ALWAYS);
+                HBox.setHgrow(rRegion, javafx.scene.layout.Priority.ALWAYS);
+                
+                buttonHBox.getChildren().addAll(lRegion, submitButton, mRegion, cancelButton, rRegion);                
+                dialogVbox.getChildren().add(buttonHBox); 
+                
+                submitButton.addEventHandler(javafx.scene.input.MouseEvent.MOUSE_CLICKED, 
+                        new EventHandler<javafx.scene.input.MouseEvent>() {
+                    @Override public void handle(javafx.scene.input.MouseEvent e) {
+                        String text = pasteArea.getText();
+                        if (text == null || text.isEmpty()) {
+                            return;
+                        }
+                        
+                        readPasteData(text);
+                        dialog.close();
+                    }
+                });
+                cancelButton.addEventHandler(javafx.scene.input.MouseEvent.MOUSE_CLICKED, 
+                        new EventHandler<javafx.scene.input.MouseEvent>() {
+                    @Override public void handle(javafx.scene.input.MouseEvent e) {
+                        dialog.close();
+                    }
+                });
+                
+                Scene dialogScene = new Scene(dialogVbox, 600, 400);
+                dialog.setScene(dialogScene);
+                dialog.show();
+            } });
+        menuFile.getItems().add(pasteIn);
+        
         MenuItem exit = new MenuItem("Exit");
         exit.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -105,6 +165,22 @@ public class WASReaderApplication extends Application  {
         ((VBox) scene.getRoot()).getChildren().addAll(menuBar);
     }
     
+    private void readPasteData(String pasteData) {
+        if (pasteData == null) {
+            return;
+        }
+        
+        try {
+            ORMLogData ormLogData = ORMLogData.createORMLogData(pasteData);           
+            createTab(ormLogData);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Alert alert = new Alert(AlertType.INFORMATION);
+            alert.setTitle("Error opening JPA Data File");
+            alert.setContentText(e.toString());           
+            alert.showAndWait();
+        }     
+    }
     private void openFile(File f) {
         if (f == null) {
             return;
@@ -114,14 +190,14 @@ public class WASReaderApplication extends Application  {
         ObservableList<Tab> tabsList = tabPane.getTabs();
         for (Tab t : tabsList) {
             ORMLogData ormLogData = (ORMLogData) t.getUserData();
-            if (f.equals(ormLogData.getFile())) {
+            if (ormLogData.getFile() != null && f.equals(ormLogData.getFile())) {
                 return;
             }
         }
         
         try {
             ORMLogData ormLogData = ORMLogData.createORMLogData(f);           
-            createTab(f, ormLogData);
+            createTab(ormLogData);
         } catch (Exception e) {
             e.printStackTrace();
             Alert alert = new Alert(AlertType.INFORMATION);
@@ -132,7 +208,7 @@ public class WASReaderApplication extends Application  {
     }
     
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private void createTab(File f, ORMLogData ormLogData) throws Exception {
+    private void createTab(ORMLogData ormLogData) throws Exception {
         Tab tab = new Tab();
         String puName = ormLogData.getPersistenceUnitName();
         tab.setText(puName);
