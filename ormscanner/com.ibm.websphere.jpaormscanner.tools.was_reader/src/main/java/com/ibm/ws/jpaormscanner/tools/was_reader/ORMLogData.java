@@ -252,7 +252,11 @@ public class ORMLogData {
         }
         
         public String getData() {
-            return cit.toString();
+        	try {
+				return new String(ed.getData());
+			} catch (Exception e) {
+				return cit.toString();
+			}
         }
     }
     
