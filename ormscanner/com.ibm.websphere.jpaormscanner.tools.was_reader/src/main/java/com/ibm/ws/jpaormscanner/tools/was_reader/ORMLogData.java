@@ -30,6 +30,7 @@ import com.ibm.ws.jpa.diagnostics.puparser.PersistenceUnitParser;
 import com.ibm.ws.jpa.diagnostics.utils.encapsulation.EncapsulatedData;
 import com.ibm.ws.jpa.diagnostics.utils.encapsulation.EncapsulatedDataGroup;
 
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ListView;
@@ -124,6 +125,47 @@ public class ORMLogData {
         propertiesListView.setItems(items);
         return propertiesListView;
     }
+    
+    public ObservableList<ORMProperty> getPropertiesDataSource() {
+    	Map<String, String> props = edg.getProperties();
+    	List<ORMProperty> propList = new ArrayList<ORMProperty>();
+    	for (Map.Entry<String, String> entry : props.entrySet()) {
+    		propList.add(new ORMProperty(entry.getKey(), entry.getValue()));
+    	}
+    	
+    	final ObservableList<ORMProperty> data = FXCollections.observableArrayList(propList);
+    	return data;
+    }
+    
+    public class ORMProperty {
+    	private final SimpleStringProperty name;
+    	private final SimpleStringProperty value;
+    	
+    	public ORMProperty(String name, String value) {
+    		this.name = new SimpleStringProperty(name);
+    		this.value = new SimpleStringProperty(value);
+    	}
+
+    	public void setName(String name) {
+    		this.name.set(name);
+    	}
+    	
+		public String getName() {
+			return name.get();
+		}
+
+		public void setValue(String value) {
+			this.value.set(value);
+		}
+		
+		public String getValue() {
+			return value.get();
+		}
+    	
+    	
+    }
+    
+    
     private void loadPersistenceXml() throws Exception {
         EncapsulatedData ed = edg.getDataItemByName("persistence.xml");
         if (ed != null) {

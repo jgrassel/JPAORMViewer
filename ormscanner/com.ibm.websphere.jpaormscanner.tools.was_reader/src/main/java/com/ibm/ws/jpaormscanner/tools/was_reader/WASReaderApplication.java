@@ -23,6 +23,7 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ListView;
@@ -33,6 +34,8 @@ import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -278,10 +281,25 @@ public class WASReaderApplication extends Application  {
         splitPane.setDividerPosition(0, 0.2f);
         
         // Set up properties on bottom
-        ListView<String> propsListView = ormLogData.getPropertiesListView();
+        TableView propsTable = new TableView();
+        propsTable.setEditable(false);
+        
+        TableColumn propNameCol = new TableColumn("Property Name");
+        propNameCol.setMinWidth(200f);
+        propNameCol.setCellValueFactory(
+                new PropertyValueFactory<ORMLogData.ORMProperty, String>("name"));
+        TableColumn propValCol = new TableColumn("Value");
+        propValCol.setMinWidth(400f);
+        propValCol.setCellValueFactory(
+                new PropertyValueFactory<ORMLogData.ORMProperty, String>("value"));
+        propsTable.getColumns().clear();
+        propsTable.getColumns().addAll(propNameCol, propValCol);
+        propsTable.setItems(ormLogData.getPropertiesDataSource());
+        
+//        ListView<String> propsListView = ormLogData.getPropertiesListView();
         
         upDownSplitPane.setOrientation(javafx.geometry.Orientation.VERTICAL);
-        upDownSplitPane.getItems().addAll(splitPane, propsListView);
+        upDownSplitPane.getItems().addAll(splitPane, propsTable);
         upDownSplitPane.setDividerPosition(0, 0.8f);
     }
 }
