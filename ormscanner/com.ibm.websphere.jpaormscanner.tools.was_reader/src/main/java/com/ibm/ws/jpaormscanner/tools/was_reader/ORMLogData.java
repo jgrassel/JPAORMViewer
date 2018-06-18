@@ -182,7 +182,7 @@ public class ORMLogData {
             final EncapsulatedData ed = entityMappingsGroup.getDataItem(name);
             String ormData = new String(ed.getData());
             
-            EntityMappingsInfo emi = new EntityMappingsInfo(name, ormData);
+            EntityMappingsInfo emi = new EntityMappingsInfo(ed.getName(), ormData);
             emiList.add(emi);
         }
     }
@@ -241,6 +241,7 @@ public class ORMLogData {
             this.name = name;
             this.ormData = ormData;
             treeItem = new TreeItem<String>(name);
+            tabDataMap.put(treeItem, this);
         }
         
         public String getData() {
